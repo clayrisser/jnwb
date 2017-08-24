@@ -1,8 +1,0 @@
-{
-  "recommendations": [
-    "dzannotti.vscode-babel-coloring",
-    "EditorConfig.editorconfig",
-    "dbaeumer.vscode-eslint",
-    "flowtype.flow-for-vscode"
-  ]
-}
