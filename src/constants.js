@@ -8,6 +8,7 @@ export const REACT_APP = 'react-app'
 export const REACT_COMPONENT = 'react-component'
 export const WEB_APP = 'web-app'
 export const WEB_MODULE = 'web-module'
+export const ANGULARJS_MODULE = 'angularjs-module'
 
 export const PROJECT_TYPES = new Set([
   INFERNO_APP,
@@ -16,4 +17,5 @@ export const PROJECT_TYPES = new Set([
   REACT_COMPONENT,
   WEB_APP,
   WEB_MODULE,
+  ANGULARJS_MODULE,
 ])

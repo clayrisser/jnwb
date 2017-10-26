@@ -10,7 +10,7 @@ import runSeries from 'run-series'
 
 import {
   CONFIG_FILE_NAME, INFERNO_APP, PREACT_APP, PROJECT_TYPES, REACT_APP,
-  REACT_COMPONENT, WEB_APP, WEB_MODULE,
+  REACT_COMPONENT, WEB_APP, WEB_MODULE, ANGULARJS_MODULE
 } from './constants'
 import {UserError} from './errors'
 import pkg from '../package.json'
@@ -156,6 +156,7 @@ const MODULE_PROJECT_CONFIG = {
     externals: {react: 'React'},
   },
   [WEB_MODULE]: {},
+  [ANGULARJS_MODULE]: {},
 }
 
 /**

@@ -1,4 +1,12 @@
-import {INFERNO_APP, PREACT_APP, REACT_APP, REACT_COMPONENT, WEB_APP, WEB_MODULE} from '../constants'
+import {
+  INFERNO_APP,
+  PREACT_APP,
+  REACT_APP,
+  REACT_COMPONENT,
+  WEB_APP,
+  WEB_MODULE,
+  ANGULARJS_MODULE
+} from '../constants'
 import {getProjectType} from '../getUserConfig'
 import buildInfernoApp from './build-inferno-app'
 import buildPreactApp from './build-preact-app'
@@ -6,6 +14,7 @@ import buildReactApp from './build-react-app'
 import buildReactComponent from './build-react-component'
 import buildWebApp from './build-web-app'
 import buildWebModule from './build-web-module'
+import buildAngularjsModule from './build-angularjs-module'
 
 const BUILD_COMMANDS = {
   [INFERNO_APP]: buildInfernoApp,
@@ -14,6 +23,7 @@ const BUILD_COMMANDS = {
   [REACT_COMPONENT]: buildReactComponent,
   [WEB_APP]: buildWebApp,
   [WEB_MODULE]: buildWebModule,
+  [ANGULARJS_MODULE]: buildAngularjsModule,
 }
 
 /**

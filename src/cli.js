@@ -74,6 +74,7 @@ Project creation commands:
     ${req('inferno-app')}      an Inferno app
     ${req('web-app')}          a plain JavaScript app
     ${req('web-module')}       a plain JavaScript npm module
+    ${req('angularjs-module')} an AngularJS 1 module
 
 Generic project development commands:
   Arguments for these commands depend on the type of project they're being run
