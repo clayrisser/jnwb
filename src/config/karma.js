@@ -2,10 +2,10 @@ import fs from 'fs'
 
 import chalk from 'chalk'
 
-import {pluralise as s, typeOf} from '../utils'
+import { pluralise as s, typeOf } from '../utils'
 
-export function processKarmaConfig({report, userConfig}) {
-  let {
+export function processKarmaConfig({ report, userConfig }) {
+  const {
     browsers,
     excludeFromCoverage,
     frameworks,
@@ -18,7 +18,7 @@ export function processKarmaConfig({report, userConfig}) {
     ...unexpectedConfig
   } = userConfig.karma
 
-  let unexpectedProps = Object.keys(unexpectedConfig)
+  const unexpectedProps = Object.keys(unexpectedConfig)
   if (unexpectedProps.length > 0) {
     report.error(
       'karma',

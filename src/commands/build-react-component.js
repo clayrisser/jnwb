@@ -1,7 +1,7 @@
 import runSeries from 'run-series'
 
 import moduleBuild from '../moduleBuild'
-import {directoryExists} from '../utils'
+import { directoryExists } from '../utils'
 import buildDemo from './build-demo'
 
 /**
@@ -9,7 +9,7 @@ import buildDemo from './build-demo'
  * its demo app if it has one.
  */
 export default function buildModule(args, cb) {
-  let config = {
+  const config = {
     babel: {
       presets: [require.resolve('babel-preset-react')],
       stage: 1,
@@ -32,12 +32,12 @@ export default function buildModule(args, cb) {
     }
   }
 
-  let tasks = [(cb) => moduleBuild(args, config, cb)]
+  const tasks = [cb => moduleBuild(args, config, cb)]
   // Disable demo build with --no-demo or --no-demo-build
   if (args.demo !== false &&
       args['demo-build'] !== false &&
       directoryExists('demo')) {
-    tasks.push((cb) => buildDemo(args, cb))
+    tasks.push(cb => buildDemo(args, cb))
   }
   runSeries(tasks, cb)
 }

@@ -7,13 +7,13 @@ import runSeries from 'run-series'
 import merge from 'webpack-merge'
 
 import cleanModule from './commands/clean-module'
-import {getPluginConfig, getUserConfig} from './config'
+import { getPluginConfig, getUserConfig } from './config'
 import createBabelConfig from './createBabelConfig'
 import debug from './debug'
-import {UserError} from './errors'
-import {deepToString} from './utils'
+import { UserError } from './errors'
+import { deepToString } from './utils'
 import webpackBuild from './webpackBuild'
-import {createBanner, createExternals, logGzippedFileSizes} from './webpackUtils'
+import { createBanner, createExternals, logGzippedFileSizes } from './webpackUtils'
 
 // These match DEFAULT_TEST_DIRS and DEFAULT_TEST_FILES for co-located tests in
 // ./createKarmaConfig.js; unfortunately Babel doesn't seem to support reusing
@@ -28,21 +28,21 @@ const DEFAULT_BABEL_IGNORE_CONFIG = [
 /**
  * Run Babel with generated config written to a temporary .babelrc.
  */
-function runBabel(name, {copyFiles, outDir, src}, buildBabelConfig, userConfig, cb) {
-  let babelConfig = createBabelConfig(buildBabelConfig, userConfig.babel, userConfig.path)
+function runBabel(name, { copyFiles, outDir, src }, buildBabelConfig, userConfig, cb) {
+  const babelConfig = createBabelConfig(buildBabelConfig, userConfig.babel, userConfig.path)
   babelConfig.ignore = DEFAULT_BABEL_IGNORE_CONFIG
 
   debug('babel config: %s', deepToString(babelConfig))
 
-  let args = [src, '--out-dir', outDir, '--quiet']
+  const args = [src, '--out-dir', outDir, '--quiet']
   if (copyFiles) {
     args.push('--copy-files')
   }
 
   fs.writeFile('.babelrc', JSON.stringify(babelConfig, null, 2), (err) => {
     if (err) return cb(err)
-    let spinner = ora(`Creating ${name} build`).start()
-    let babel = spawn(require.resolve('.bin/babel'), args, {stdio: 'inherit'})
+    const spinner = ora(`Creating ${name} build`).start()
+    const babel = spawn(require.resolve('.bin/babel'), args, { stdio: 'inherit' })
     babel.on('exit', (code) => {
       let babelError
       if (code !== 0) {
@@ -63,11 +63,11 @@ function runBabel(name, {copyFiles, outDir, src}, buildBabelConfig, userConfig, 
  * Create development and production UMD builds for <script> tag usage.
  */
 function buildUMD(args, buildConfig, userConfig, cb) {
-  let spinner = ora('Creating UMD builds').start()
+  const spinner = ora('Creating UMD builds').start()
 
-  let pkg = require(path.resolve('package.json'))
-  let entry = path.resolve(args._[1] || 'src/index.js')
-  let webpackBuildConfig = {
+  const pkg = require(path.resolve('package.json'))
+  const entry = path.resolve(args._[1] || 'src/index.js')
+  const webpackBuildConfig = {
     babel: buildConfig.babel,
     entry: [entry],
     output: {
@@ -124,19 +124,19 @@ export default function moduleBuild(args, buildConfig = {}, cb) {
     )
   }
 
-  let src = path.resolve('src')
-  let pluginConfig = getPluginConfig(args)
-  let userConfig = getUserConfig(args, {pluginConfig})
-  let copyFiles = !!args['copy-files']
+  const src = path.resolve('src')
+  const pluginConfig = getPluginConfig(args)
+  const userConfig = getUserConfig(args, { pluginConfig })
+  const copyFiles = !!args['copy-files']
 
-  let tasks = [(cb) => cleanModule(args, cb)]
+  const tasks = [cb => cleanModule(args, cb)]
 
   // The CommonJS build is enabled by default, and must be explicitly
   // disabled if you don't want it.
   if (userConfig.npm.cjs !== false) {
-    tasks.push((cb) => runBabel(
+    tasks.push(cb => runBabel(
       'ES5',
-      {copyFiles, outDir: path.resolve('lib'), src},
+      { copyFiles, outDir: path.resolve('lib'), src },
       merge(buildConfig.babel, buildConfig.babelDev || {}, {
         // Don't force CommonJS users of the CommonJS build to eat a .require
         commonJSInterop: true,
@@ -157,9 +157,9 @@ export default function moduleBuild(args, buildConfig = {}, cb) {
   // The ES6 modules build is enabled by default, and must be explicitly
   // disabled if you don't want it.
   if (userConfig.npm.esModules !== false) {
-    tasks.push((cb) => runBabel(
+    tasks.push(cb => runBabel(
       'ES6 modules',
-      {copyFiles, outDir: path.resolve('es'), src},
+      { copyFiles, outDir: path.resolve('es'), src },
       merge(buildConfig.babel, buildConfig.babelDev || {}, {
         // Don't set the path to nwb's babel-runtime, as it will need to be a
         // peerDependency of your module if you use transform-runtime's helpers
@@ -175,7 +175,7 @@ export default function moduleBuild(args, buildConfig = {}, cb) {
 
   // The UMD build must be explicitly enabled
   if (userConfig.npm.umd) {
-    tasks.push((cb) => buildUMD(args, buildConfig, userConfig, cb))
+    tasks.push(cb => buildUMD(args, buildConfig, userConfig, cb))
   }
 
   runSeries(tasks, cb)

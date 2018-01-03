@@ -1,11 +1,11 @@
 import ora from 'ora'
 import webpack from 'webpack'
 
-import {getPluginConfig, getUserConfig} from './config'
+import { getPluginConfig, getUserConfig } from './config'
 import createWebpackConfig from './createWebpackConfig'
 import debug from './debug'
-import {deepToString} from './utils'
-import {logBuildResults} from './webpackUtils'
+import { deepToString } from './utils'
+import { logBuildResults } from './webpackUtils'
 
 /**
  * If you pass a non-falsy type, this will handle spinner display and output
@@ -16,10 +16,10 @@ export default function webpackBuild(type, args, buildConfig, cb) {
     process.env.NODE_ENV = 'production'
   }
 
-  let pluginConfig = getPluginConfig(args)
+  const pluginConfig = getPluginConfig(args)
   let userConfig
   try {
-    userConfig = getUserConfig(args, {pluginConfig})
+    userConfig = getUserConfig(args, { pluginConfig })
   }
   catch (e) {
     return cb(e)
@@ -43,7 +43,7 @@ export default function webpackBuild(type, args, buildConfig, cb) {
   if (type) {
     spinner = ora(`Building ${type}`).start()
   }
-  let compiler = webpack(webpackConfig)
+  const compiler = webpack(webpackConfig)
   compiler.run((err, stats) => {
     if (err) {
       if (spinner) {

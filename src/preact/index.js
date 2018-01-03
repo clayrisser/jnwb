@@ -1,5 +1,5 @@
 // @flow
-import {modulePath} from '../utils'
+import { modulePath } from '../utils'
 
 function getBaseConfig() {
   return {
@@ -9,7 +9,7 @@ function getBaseConfig() {
     // Allow compatible React components to be used
     resolve: {
       alias: {
-        'react': 'preact-compat',
+        react: 'preact-compat',
         'react-dom': 'preact-compat',
         'create-react-class': 'preact-compat/lib/create-react-class',
       }
@@ -27,7 +27,7 @@ function getQuickConfig() {
     defaultTitle: 'Preact App',
     renderShim: require.resolve('./renderShim'),
     renderShimAliases: {
-      'preact': modulePath('preact'),
+      preact: modulePath('preact'),
     }
   }
 }

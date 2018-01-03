@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import {red} from 'chalk'
+import { red } from 'chalk'
 
 import cli from '../cli'
-import {ConfigValidationError, KarmaExitCodeError, UserError} from '../errors'
+import { ConfigValidationError, KarmaExitCodeError, UserError } from '../errors'
 
 function handleError(error) {
   if (error instanceof UserError) {
@@ -25,7 +25,7 @@ function handleError(error) {
 }
 
 try {
-  cli(process.argv.slice(2), err => {
+  cli(process.argv.slice(2), (err) => {
     if (err) handleError(err)
     process.exit(0)
   })

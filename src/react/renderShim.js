@@ -1,10 +1,10 @@
 /* global NWB_QUICK_MOUNT_ID */
 
-let React = require('react')
-let ReactDOM = require('react-dom')
-let {createElement} = React
-let {render} = ReactDOM
-let parent = document.getElementById(NWB_QUICK_MOUNT_ID)
+const React = require('react')
+const ReactDOM = require('react-dom')
+const { createElement } = React
+const { render } = ReactDOM
+const parent = document.getElementById(NWB_QUICK_MOUNT_ID)
 let element = null
 
 function renderEntry(exported) {

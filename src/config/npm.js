@@ -1,16 +1,16 @@
 import chalk from 'chalk'
 
-import {pluralise as s, typeOf} from '../utils'
+import { pluralise as s, typeOf } from '../utils'
 
-export function processNpmBuildConfig({report, userConfig}) {
-  let {
+export function processNpmBuildConfig({ report, userConfig }) {
+  const {
     cjs,
     esModules,
     umd,
     ...unexpectedConfig
   } = userConfig.npm
 
-  let unexpectedProps = Object.keys(unexpectedConfig)
+  const unexpectedProps = Object.keys(unexpectedConfig)
   if (unexpectedProps.length > 0) {
     report.error(
       'npm',
@@ -48,7 +48,7 @@ export function processNpmBuildConfig({report, userConfig}) {
       // ok
     }
     else if (typeOf(umd) === 'string') {
-      userConfig.npm.umd = {global: umd}
+      userConfig.npm.umd = { global: umd }
     }
     else if (typeOf(umd) !== 'object') {
       report.error(
@@ -60,13 +60,13 @@ export function processNpmBuildConfig({report, userConfig}) {
       )
     }
     else {
-      let {
+      const {
         global: umdGlobal,
         externals,
         ...unexpectedConfig
       } = umd
 
-      let unexpectedProps = Object.keys(unexpectedConfig)
+      const unexpectedProps = Object.keys(unexpectedConfig)
       if (unexpectedProps.length > 0) {
         report.error(
           'npm.umd',

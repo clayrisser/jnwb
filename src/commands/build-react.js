@@ -1,8 +1,8 @@
 // @flow
-import {build} from '../quickCommands'
+import { build } from '../quickCommands'
 import reactConfig from '../react'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Build a standalone React app entry module, component or element.

@@ -1,8 +1,8 @@
 // @flow
 import preactConfig from '../preact'
-import {serve} from '../quickCommands'
+import { serve } from '../quickCommands'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Build a standalone Preact app entry module, component or element.

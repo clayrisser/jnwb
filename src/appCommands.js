@@ -6,11 +6,11 @@ import runSeries from 'run-series'
 import merge from 'webpack-merge'
 
 import cleanApp from './commands/clean-app'
-import {directoryExists, install} from './utils'
+import { directoryExists, install } from './utils'
 import webpackBuild from './webpackBuild'
 import webpackServer from './webpackServer'
 
-import type {ErrBack} from './types'
+import type { ErrBack } from './types'
 
 type AppConfig = {
   getName: () => string,
@@ -26,11 +26,11 @@ const DEFAULT_HTML_PATH = 'src/index.html'
  * resolvable.
  */
 export function build(args: Object, appConfig: AppConfig, cb: ErrBack) {
-  let dist = args._[2] || 'dist'
+  const dist = args._[2] || 'dist'
 
-  let tasks = [
-    (cb) => cleanApp({_: ['clean-app', dist]}, cb),
-    (cb) => webpackBuild(
+  const tasks = [
+    cb => cleanApp({ _: ['clean-app', dist] }, cb),
+    cb => webpackBuild(
       `${appConfig.getName()} app`,
       args,
       () => createBuildConfig(args, appConfig.getBuildConfig()),
@@ -38,9 +38,9 @@ export function build(args: Object, appConfig: AppConfig, cb: ErrBack) {
     ),
   ]
 
-  let buildDependencies = appConfig.getBuildDependencies()
+  const buildDependencies = appConfig.getBuildDependencies()
   if (buildDependencies.length > 0) {
-    tasks.unshift((cb) => install(buildDependencies, {check: true}, cb))
+    tasks.unshift(cb => install(buildDependencies, { check: true }, cb))
   }
 
   runSeries(tasks, cb)
@@ -51,13 +51,13 @@ export function build(args: Object, appConfig: AppConfig, cb: ErrBack) {
  * provided into it.
  */
 export function createBuildConfig(args: Object, extra: Object = {}) {
-  let entry = path.resolve(args._[1] || 'src/index.js')
-  let dist = path.resolve(args._[2] || 'dist')
+  const entry = path.resolve(args._[1] || 'src/index.js')
+  const dist = path.resolve(args._[2] || 'dist')
 
-  let production = process.env.NODE_ENV === 'production'
-  let filenamePattern = production ? '[name].[chunkhash:8].js' : '[name].js'
+  const production = process.env.NODE_ENV === 'production'
+  const filenamePattern = production ? '[name].[chunkhash:8].js' : '[name].js'
 
-  let config: Object = {
+  const config: Object = {
     devtool: 'source-map',
     entry: {
       app: [entry],
@@ -75,7 +75,7 @@ export function createBuildConfig(args: Object, extra: Object = {}) {
   }
 
   if (directoryExists('public')) {
-    config.plugins.copy = [{from: path.resolve('public'), to: dist, ignore: '.gitkeep'}]
+    config.plugins.copy = [{ from: path.resolve('public'), to: dist, ignore: '.gitkeep' }]
   }
 
   return merge(config, extra)
@@ -86,10 +86,10 @@ export function createBuildConfig(args: Object, extra: Object = {}) {
  * objects provided into it.
  */
 export function createServeConfig(args: Object, ...extra: Object[]) {
-  let entry = path.resolve(args._[1] || 'src/index.js')
-  let dist = path.resolve(args._[2] || 'dist')
+  const entry = path.resolve(args._[1] || 'src/index.js')
+  const dist = path.resolve(args._[2] || 'dist')
 
-  let config: Object = {
+  const config: Object = {
     entry: [entry],
     output: {
       path: dist,
@@ -102,7 +102,7 @@ export function createServeConfig(args: Object, ...extra: Object[]) {
   }
 
   if (directoryExists('public')) {
-    config.plugins.copy = [{from: path.resolve('public'), to: dist, ignore: '.gitkeep'}]
+    config.plugins.copy = [{ from: path.resolve('public'), to: dist, ignore: '.gitkeep' }]
   }
 
   return merge(config, ...extra)

@@ -1,8 +1,8 @@
 // @flow
-import {getPluginConfig, getUserConfig} from './config'
+import { getPluginConfig, getUserConfig } from './config'
 import createWebpackConfig from './createWebpackConfig'
 
-import type {ServerConfig} from './types'
+import type { ServerConfig } from './types'
 
 /**
  * Create Webpack entry config for the client which will subscribe to Hot Module
@@ -13,7 +13,7 @@ function getHMRClientEntries(args: Object, serverConfig: ?ServerConfig): string[
   // where the server config is out of our hands and we're using
   // webpack-hot-middleware for HMR.
   if (serverConfig == null) {
-    let hotMiddlewareOptions = args.reload ? '?reload=true' : ''
+    const hotMiddlewareOptions = args.reload ? '?reload=true' : ''
     return [
       // Polyfill EventSource for IE, as webpack-hot-middleware/client uses it
       require.resolve('eventsource-polyfill'),
@@ -28,7 +28,7 @@ function getHMRClientEntries(args: Object, serverConfig: ?ServerConfig): string[
   }
 
   return [
-    require.resolve('webpack-dev-server/client') + `?${hmrURL}`,
+    `${require.resolve('webpack-dev-server/client')}?${hmrURL}`,
     require.resolve(`webpack/hot/${args.reload ? '' : 'only-'}dev-server`),
   ]
 }
@@ -41,9 +41,9 @@ export default function createServerWebpackConfig(
   commandConfig: Object,
   serverConfig: ?ServerConfig,
 ) {
-  let pluginConfig = getPluginConfig(args)
-  let userConfig = getUserConfig(args, {pluginConfig})
-  let {entry, plugins = {}, ...otherCommandConfig} = commandConfig
+  const pluginConfig = getPluginConfig(args)
+  const userConfig = getUserConfig(args, { pluginConfig })
+  const { entry, plugins = {}, ...otherCommandConfig } = commandConfig
 
   if (args['auto-install'] || args.install) {
     plugins.autoInstall = true

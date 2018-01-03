@@ -3,11 +3,11 @@ import path from 'path'
 import chalk from 'chalk'
 import figures from 'figures'
 import filesize from 'filesize'
-import {sync as gzipSize} from 'gzip-size'
+import { sync as gzipSize } from 'gzip-size'
 
 const FRIENDLY_SYNTAX_ERROR_LABEL = 'Syntax error:'
 
-let s = n => n === 1 ? '' : 's'
+const s = n => n === 1 ? '' : 's'
 
 /**
  * Create a banner comment for a UMD build file from package.json config.
@@ -28,7 +28,7 @@ export function createBanner(pkg) {
  */
 export function createExternals(externals = {}) {
   return Object.keys(externals).reduce((webpackExternals, packageName) => {
-    let globalName = externals[packageName]
+    const globalName = externals[packageName]
     webpackExternals[packageName] = {
       root: globalName,
       commonjs2: packageName,
@@ -67,11 +67,11 @@ function formatMessages(messages, type) {
 }
 
 function getFileDetails(stats) {
-  let outputPath = stats.compilation.outputOptions.path
+  const outputPath = stats.compilation.outputOptions.path
   return Object.keys(stats.compilation.assets)
     .filter(assetName => /\.(css|js)$/.test(assetName))
-    .map(assetName => {
-      let size = gzipSize(stats.compilation.assets[assetName].source())
+    .map((assetName) => {
+      const size = gzipSize(stats.compilation.assets[assetName].source())
       return {
         dir: path.dirname(path.join(path.relative(process.cwd(), outputPath), assetName)),
         name: path.basename(assetName),
@@ -109,13 +109,13 @@ export function logBuildResults(stats, spinner) {
 
 export function logErrorsAndWarnings(stats) {
   // Show fewer error details
-  let json = stats.toJson({}, true)
+  const json = stats.toJson({}, true)
 
   let formattedErrors = formatMessages(json.errors, chalk.bgRed.white(' ERROR '))
-  let formattedWarnings = formatMessages(json.warnings, chalk.bgYellow.black(' WARNING '))
+  const formattedWarnings = formatMessages(json.warnings, chalk.bgYellow.black(' WARNING '))
 
   if (stats.hasErrors()) {
-    let errors = formattedErrors.length
+    const errors = formattedErrors.length
     console.log(chalk.red(`Failed to compile with ${errors} error${s(errors)}.`))
     if (formattedErrors.some(isLikelyASyntaxError)) {
       // If there are any syntax errors, show just them.
@@ -123,7 +123,7 @@ export function logErrorsAndWarnings(stats) {
       // useful Babel syntax error.
       formattedErrors = formattedErrors.filter(isLikelyASyntaxError)
     }
-    formattedErrors.forEach(message => {
+    formattedErrors.forEach((message) => {
       console.log()
       console.log(message)
     })
@@ -131,9 +131,9 @@ export function logErrorsAndWarnings(stats) {
   }
 
   if (stats.hasWarnings()) {
-    let warnings = formattedWarnings.length
+    const warnings = formattedWarnings.length
     console.log(chalk.yellow(`Compiled with ${warnings} warning${s(warnings)}.`))
-    formattedWarnings.forEach(message => {
+    formattedWarnings.forEach((message) => {
       console.log()
       console.log(message)
     })
@@ -145,21 +145,21 @@ export function logErrorsAndWarnings(stats) {
  * and CSS assets they contain, largest-first.
  */
 export function logGzippedFileSizes(...stats) {
-  let files = stats.reduce((files, stats) => (files.concat(getFileDetails(stats))), [])
-                   .filter(({name}) => !/^manifest\.[a-z\d]+\.js$/.test(name))
+  const files = stats.reduce((files, stats) => (files.concat(getFileDetails(stats))), [])
+                   .filter(({ name }) => !/^manifest\.[a-z\d]+\.js$/.test(name))
 
-  let longest = files.reduce((max, {dir, name}) => {
-    let length = (dir + name).length
+  const longest = files.reduce((max, { dir, name }) => {
+    const length = (dir + name).length
     return length > max ? length : max
   }, 0)
-  let pad = (dir, name) => Array(longest - (dir + name).length + 1).join(' ')
+  const pad = (dir, name) => Array(longest - (dir + name).length + 1).join(' ')
 
   console.log(`File size${s(files.length)} after gzip:`)
   console.log()
 
   files
     .sort((a, b) => b.size - a.size)
-    .forEach(({dir, name, sizeLabel}) => {
+    .forEach(({ dir, name, sizeLabel }) => {
       console.log(
         `  ${chalk.dim(`${dir}${path.sep}`)}${chalk.cyan(name)}` +
         `  ${pad(dir, name)}${chalk.green(sizeLabel)}`

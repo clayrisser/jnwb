@@ -9,13 +9,13 @@ import HtmlPlugin from 'html-webpack-plugin'
 import NpmInstallPlugin from 'npm-install-webpack2-plugin' // XXX Temporary
 // $FlowFixMe
 import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
-import webpack, {optimize} from 'webpack'
+import webpack, { optimize } from 'webpack'
 import merge from 'webpack-merge'
 
 import createBabelConfig from './createBabelConfig'
 import debug from './debug'
-import {UserError} from './errors'
-import {deepToString, replaceArrayMerge, typeOf} from './utils'
+import { UserError } from './errors'
+import { deepToString, replaceArrayMerge, typeOf } from './utils'
 import StatusPlugin from './WebpackStatusPlugin'
 
 type LoaderConfig = {
@@ -59,7 +59,7 @@ function createUglifyConfig(userWebpackConfig) {
       typeof userWebpackConfig.uglify === 'object' &&
       typeof userWebpackConfig.uglify.uglifyConfig === 'object' &&
       'compress' in userWebpackConfig.uglify.uglifyConfig
-        ? {uglifyOptions: {compress: userWebpackConfig.uglify.uglifyConfig.compress}}
+        ? { uglifyOptions: { compress: userWebpackConfig.uglify.uglifyConfig.compress } }
         : {}
     )
   }
@@ -80,7 +80,7 @@ export function mergeRuleConfig(
   let rule
   // Omit the default loader and options if the user is configuring their own
   if (defaultConfig.loader && (userConfig.loader || userConfig.use)) {
-    let {
+    const {
       loader: defaultLoader, options: defaultOptions, // eslint-disable-line no-unused-vars
       ...defaultRuleConfig
     } = defaultConfig
@@ -106,7 +106,7 @@ export function mergeLoaderConfig(
   let loader
   // If the loader is being changed, only use the provided config
   if (userConfig.loader) {
-    loader = {...userConfig}
+    loader = { ...userConfig }
   }
   else {
     // The only arrays used in default options are for PostCSS plugins, which we
@@ -133,7 +133,7 @@ export function createRuleConfigFactory(
       if (userConfig[id] === false) {
         return null
       }
-      let rule = mergeRuleConfig(defaultConfig, buildConfig[id], userConfig[id])
+      const rule = mergeRuleConfig(defaultConfig, buildConfig[id], userConfig[id])
       return rule
     }
     return defaultConfig
@@ -150,7 +150,7 @@ export function createLoaderConfigFactory(
 ): LoaderConfigFactory {
   return function (id: ?string, defaultConfig: LoaderConfig): LoaderConfig {
     if (id) {
-      let loader = mergeLoaderConfig(defaultConfig, buildConfig[id], userConfig[id])
+      const loader = mergeLoaderConfig(defaultConfig, buildConfig[id], userConfig[id])
       return loader
     }
     return defaultConfig
@@ -167,7 +167,7 @@ export function createLoaderConfigFactory(
  * e.g.: loaderConfigName('sass')('css') => 'sass-css'
  *       loaderConfigName('sass')('sass') => 'sass' (as opposed to 'sass-sass')
  */
-export let loaderConfigName = (prefix: ?string) =>
+export const loaderConfigName = (prefix: ?string) =>
   (name: string): string => {
     if (prefix && prefix.endsWith(name)) {
       return prefix
@@ -188,20 +188,20 @@ export function createStyleLoaders(
     server?: ?boolean
   } = {},
 ): UseConfig {
-  let {
+  const {
     preprocessor = null,
     prefix = null,
     server = false,
   } = options
-  let name = loaderConfigName(prefix)
-  let styleLoader = createLoader(name('style'), {
+  const name = loaderConfigName(prefix)
+  const styleLoader = createLoader(name('style'), {
     loader: require.resolve('style-loader'),
     options: {
       // Only enable style-loader HMR when we're serving a development build
       hmr: Boolean(server),
     }
   })
-  let loaders = [
+  const loaders = [
     createLoader(name('css'), {
       loader: require.resolve('css-loader'),
       options: {
@@ -229,12 +229,11 @@ export function createStyleLoaders(
     loaders.unshift(styleLoader)
     return loaders
   }
-  else {
-    return ExtractTextPlugin.extract({
-      fallback: styleLoader,
-      use: loaders,
-    })
-  }
+
+  return ExtractTextPlugin.extract({
+    fallback: styleLoader,
+    use: loaders,
+  })
 }
 
 /**
@@ -247,30 +246,31 @@ function createStyleRules(
   createRule: RuleConfigFactory,
   createLoader: LoaderConfigFactory
 ): Array<?RuleConfig> {
-  let styleConfig = userWebpackConfig.styles || {}
-  let styleRules = []
+  const styleConfig = userWebpackConfig.styles || {}
+  const styleRules = []
 
   // Configured styles rules, with individual loader configuration as part of
   // the definition.
-  Object.keys(styleConfig).forEach(type => {
-    let test, preprocessor
+  Object.keys(styleConfig).forEach((type) => {
+    let test,
+      preprocessor
     if (type === 'css') {
       test = /\.css$/
     }
     else {
-      let preprocessorConfig = pluginConfig.cssPreprocessors[type]
+      const preprocessorConfig = pluginConfig.cssPreprocessors[type]
       test = preprocessorConfig.test
-      preprocessor = {id: null, config: {loader: preprocessorConfig.loader}}
+      preprocessor = { id: null, config: { loader: preprocessorConfig.loader } }
     }
-    let ruleConfigs = [].concat(...styleConfig[type])
-    ruleConfigs.forEach(ruleConfig => {
-      let {loaders: loaderConfig, ...topLevelRuleConfig} = ruleConfig
+    const ruleConfigs = [].concat(...styleConfig[type])
+    ruleConfigs.forEach((ruleConfig) => {
+      const { loaders: loaderConfig, ...topLevelRuleConfig } = ruleConfig
       // Empty build config, as all loader config for custom style rules will be
       // provided by the user.
-      let styleRuleLoader = createLoaderConfigFactory({}, loaderConfig)
+      const styleRuleLoader = createLoaderConfigFactory({}, loaderConfig)
       styleRules.push({
         test,
-        use: createStyleLoaders(styleRuleLoader, userWebpackConfig, {preprocessor, server}),
+        use: createStyleLoaders(styleRuleLoader, userWebpackConfig, { preprocessor, server }),
         ...topLevelRuleConfig,
       })
     })
@@ -282,7 +282,7 @@ function createStyleRules(
     styleRules.push(
       createRule('css-rule', {
         test: /\.css$/,
-        use: createStyleLoaders(createLoader, userWebpackConfig, {server}),
+        use: createStyleLoaders(createLoader, userWebpackConfig, { server }),
       })
     )
   }
@@ -290,15 +290,15 @@ function createStyleRules(
   // Default rule for each CSS preprocessor plugin when nothing is configured,
   // tweakable via webpack.rules by unique id.
   if (pluginConfig.cssPreprocessors) {
-    Object.keys(pluginConfig.cssPreprocessors).forEach(id => {
+    Object.keys(pluginConfig.cssPreprocessors).forEach((id) => {
       if (id in styleConfig) return
-      let {test, loader: preprocessorLoader} = pluginConfig.cssPreprocessors[id]
+      const { test, loader: preprocessorLoader } = pluginConfig.cssPreprocessors[id]
       styleRules.push(
         createRule(`${id}-rule`, {
           test,
           use: createStyleLoaders(createLoader, userWebpackConfig, {
             prefix: id,
-            preprocessor: {id, config: {loader: preprocessorLoader}},
+            preprocessor: { id, config: { loader: preprocessorLoader } },
             server,
           })
         })
@@ -320,28 +320,28 @@ function createLegacyStyleRules(
   createRule: RuleConfigFactory,
   createLoader: LoaderConfigFactory
 ): Array<?RuleConfig> {
-  let styleRules = [
+  const styleRules = [
     createRule('css-pipeline', {
       test: /\.css$/,
-      use: createStyleLoaders(createLoader, userWebpackConfig, {server}),
+      use: createStyleLoaders(createLoader, userWebpackConfig, { server }),
       exclude: /node_modules/,
     }),
     createRule('vendor-css-pipeline', {
       test: /\.css$/,
-      use: createStyleLoaders(createLoader, userWebpackConfig, {prefix: 'vendor', server}),
+      use: createStyleLoaders(createLoader, userWebpackConfig, { prefix: 'vendor', server }),
       include: /node_modules/,
     })
   ]
 
   if (pluginConfig.cssPreprocessors) {
-    Object.keys(pluginConfig.cssPreprocessors).forEach(id => {
-      let {test, loader: preprocessorLoader} = pluginConfig.cssPreprocessors[id]
+    Object.keys(pluginConfig.cssPreprocessors).forEach((id) => {
+      const { test, loader: preprocessorLoader } = pluginConfig.cssPreprocessors[id]
       styleRules.push(
         createRule(`${id}-pipeline`, {
           test,
           use: createStyleLoaders(createLoader, userWebpackConfig, {
             prefix: id,
-            preprocessor: {id, config: {loader: preprocessorLoader}},
+            preprocessor: { id, config: { loader: preprocessorLoader } },
             server,
           }),
           exclude: /node_modules/
@@ -350,7 +350,7 @@ function createLegacyStyleRules(
           test,
           use: createStyleLoaders(createLoader, userWebpackConfig, {
             prefix: `vendor-${id}`,
-            preprocessor: {id, config: {loader: preprocessorLoader}},
+            preprocessor: { id, config: { loader: preprocessorLoader } },
             server,
           }),
           include: /node_modules/
@@ -378,11 +378,11 @@ export function createRules(
   userWebpackConfig: Object = {},
   pluginConfig: Object = {}
 ) {
-  let createRule = createRuleConfigFactory(buildConfig, userWebpackConfig.rules)
-  let createLoader = createLoaderConfigFactory(buildConfig, userWebpackConfig.rules)
+  const createRule = createRuleConfigFactory(buildConfig, userWebpackConfig.rules)
+  const createLoader = createLoaderConfigFactory(buildConfig, userWebpackConfig.rules)
 
   // Default options for url-loader
-  let urlLoaderOptions = {
+  const urlLoaderOptions = {
     // Don't inline anything by default
     limit: 1,
     // Always use a hash to prevent files with the same name causing issues
@@ -404,37 +404,37 @@ export function createRules(
     createRule('graphics', {
       test: /\.(gif|png|webp)$/,
       loader: require.resolve('url-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     createRule('svg', {
       test: /\.svg$/,
       loader: require.resolve('url-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     createRule('jpeg', {
       test: /\.jpe?g$/,
       loader: require.resolve('url-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     createRule('fonts', {
       test: /\.(eot|otf|ttf|woff|woff2)$/,
       loader: require.resolve('url-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     createRule('video', {
       test: /\.(mp4|ogg|webm)$/,
       loader: require.resolve('url-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     createRule('audio', {
       test: /\.(wav|mp3|m4a|aac|oga)$/,
       loader: require.resolve('url-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     createRule('html', {
       test: /\.html$/,
       loader: require.resolve('html-loader'),
-      options: {...urlLoaderOptions},
+      options: { ...urlLoaderOptions },
     }),
     // Extra rules from build config, still configurable via user config when
     // the rules specify an id.
@@ -465,9 +465,9 @@ export function createExtraRules(
   extraRules: Object[] = [],
   userConfig: Object = {}
 ): Array<?RuleConfig> {
-  let createRule = createRuleConfigFactory({}, userConfig)
-  return extraRules.map(extraRule => {
-    let {id, ...ruleConfig} = extraRule
+  const createRule = createRuleConfigFactory({}, userConfig)
+  return extraRules.map((extraRule) => {
+    const { id, ...ruleConfig } = extraRule
     return createRule(id, ruleConfig)
   })
 }
@@ -480,9 +480,9 @@ export function createExtraRules(
 function injectManifestPlugin() {
   this.plugin('compilation', (compilation) => {
     compilation.plugin('html-webpack-plugin-before-html-processing', (data, cb) => {
-      Object.keys(compilation.assets).forEach(key => {
+      Object.keys(compilation.assets).forEach((key) => {
         if (!key.startsWith('manifest.')) return
-        let {children} = compilation.assets[key]
+        const { children } = compilation.assets[key]
         if (children && children[0]) {
           data.html = data.html.replace(
             /^(\s*)<\/body>/m,
@@ -490,7 +490,7 @@ function injectManifestPlugin() {
           )
           // Remove the manifest from HtmlPlugin's assets to prevent a <script>
           // tag being created for it.
-          var manifestIndex = data.assets.js.indexOf(data.assets.publicPath + key)
+          const manifestIndex = data.assets.js.indexOf(data.assets.publicPath + key)
           data.assets.js.splice(manifestIndex, 1)
           delete data.assets.chunks.manifest
         }
@@ -529,8 +529,8 @@ export function createPlugins(
   buildConfig: Object = {},
   userConfig: Object = {}
 ) {
-  let development = process.env.NODE_ENV === 'development'
-  let production = process.env.NODE_ENV === 'production'
+  const development = process.env.NODE_ENV === 'development'
+  const production = process.env.NODE_ENV === 'production'
 
   let plugins = [
     // Enforce case-sensitive import paths
@@ -595,7 +595,7 @@ export function createPlugins(
         // The Webpack manifest is normally folded into the last chunk, changing
         // its hash - prevent this by extracting the manifest into its own
         // chunk - also essential for deterministic hashing.
-        new optimize.CommonsChunkPlugin({name: 'manifest'}),
+        new optimize.CommonsChunkPlugin({ name: 'manifest' }),
         // Inject the Webpack manifest into the generated HTML as a <script>
         injectManifestPlugin,
       )
@@ -646,7 +646,7 @@ export function createPlugins(
 
   // Insert a banner comment at the top of generated files - used for UMD builds
   if (buildConfig.banner) {
-    plugins.push(new webpack.BannerPlugin({banner: buildConfig.banner}))
+    plugins.push(new webpack.BannerPlugin({ banner: buildConfig.banner }))
   }
 
   // Escape hatch for any extra plugins a particular build ever needs to add
@@ -699,7 +699,7 @@ export const COMPAT_CONFIGS = {
       ]
     }
   },
-  'react-intl'(options: {locales: string[]}) {
+  'react-intl': function(options: {locales: string[]}) {
     return {
       plugins: [
         new webpack.ContextReplacementPlugin(
@@ -728,8 +728,8 @@ export const COMPAT_CONFIGS = {
  * Returns null if there's nothing to merge based on user config.
  */
 export function getCompatConfig(userCompatConfig: Object = {}): ?Object {
-  let configs = []
-  Object.keys(userCompatConfig).map(lib => {
+  const configs = []
+  Object.keys(userCompatConfig).map((lib) => {
     if (!userCompatConfig[lib]) return
     let compatConfig = COMPAT_CONFIGS[lib]
     if (typeOf(compatConfig) === 'function') {
@@ -739,7 +739,7 @@ export function getCompatConfig(userCompatConfig: Object = {}): ?Object {
     configs.push(compatConfig)
   })
   if (configs.length === 0) return null
-  if (configs.length === 1) return {...configs[0]}
+  if (configs.length === 1) return { ...configs[0] }
   return merge(...configs)
 }
 
@@ -770,7 +770,7 @@ export default function createWebpackConfig(
   // Final webpack config is primarily driven by build configuration for the nwb
   // command being run. Each command configures a default, working webpack
   // configuration for the task it needs to perform.
-  let {
+  const {
     // These build config items are used to create chunks of webpack config,
     // rather than being included as-is.
     babel: buildBabelConfig = {},
@@ -786,18 +786,18 @@ export default function createWebpackConfig(
     ...otherBuildConfig
   } = buildConfig
 
-  let userWebpackConfig = userConfig.webpack || {}
-  let userOutputConfig = {}
+  const userWebpackConfig = userConfig.webpack || {}
+  const userOutputConfig = {}
   if ('publicPath' in userWebpackConfig) {
     userOutputConfig.publicPath = userWebpackConfig.publicPath
   }
-  let userResolveConfig = {}
+  const userResolveConfig = {}
   if (userWebpackConfig.aliases) {
     userResolveConfig.alias = userWebpackConfig.aliases
   }
 
   // Generate config for babel-loader and set it as loader config for the build
-  buildRulesConfig.babel = {options: createBabelConfig(buildBabelConfig, userConfig.babel, userConfig.path)}
+  buildRulesConfig.babel = { options: createBabelConfig(buildBabelConfig, userConfig.babel, userConfig.path) }
 
   let webpackConfig = {
     module: {
@@ -829,7 +829,7 @@ export default function createWebpackConfig(
   // Create and merge compatibility configuration into the generated config if
   // specified.
   if (userWebpackConfig.compat) {
-    let compatConfig = getCompatConfig(userWebpackConfig.compat)
+    const compatConfig = getCompatConfig(userWebpackConfig.compat)
     if (compatConfig) {
       webpackConfig = merge(webpackConfig, compatConfig)
     }

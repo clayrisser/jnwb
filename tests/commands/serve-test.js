@@ -31,11 +31,11 @@ describe.skip('command: serve', function() {
     let state = States.INIT
     let buildResults
 
-    before(done => {
+    before((done) => {
       originalCwd = process.cwd()
       tmpDir = temp.mkdirSync('nwb-test')
       process.chdir(tmpDir)
-      cli(['new', 'react-app', 'test-app'], err => {
+      cli(['new', 'react-app', 'test-app'], (err) => {
         expect(err).toNotExist('No errors creating new React app')
         process.chdir(path.join(tmpDir, 'test-app'))
 
@@ -43,7 +43,7 @@ describe.skip('command: serve', function() {
         server = spawn('node', [path.join(__dirname, '../../lib/bin/nwb.js'), 'serve'])
 
         // Start the HMR EventSource client when the initial build completes
-        server.stdout.on('data', data => {
+        server.stdout.on('data', (data) => {
           console.log(`server stdout: ${data}`)
           if (state === States.INIT && /Compiled successfully/.test(data)) {
             state = States.INIT_OK
@@ -52,7 +52,7 @@ describe.skip('command: serve', function() {
         })
 
         // Fail if there's any error logging
-        server.stderr.on('data', data => {
+        server.stderr.on('data', (data) => {
           done(new Error(`stderr output received: ${data}`))
         })
 
@@ -64,22 +64,22 @@ describe.skip('command: serve', function() {
             console.log('HMR open: changing file in 5s')
             setTimeout(() => {
               state = States.CHANGED_FILE
-              let content = fs.readFileSync('./src/App.js', 'utf-8')
+              const content = fs.readFileSync('./src/App.js', 'utf-8')
               fs.writeFileSync('./src/App.js', content.replace('Welcome to', 'Change'))
             }, 5000)
           }
 
           // Fail on EventSource errors
-          hmrClient.onerror = err => {
+          hmrClient.onerror = (err) => {
             done(new Error(`HMR client error: ${err}`))
           }
 
-          hmrClient.onmessage = e => {
+          hmrClient.onmessage = (e) => {
             if (e.data === '\uD83D\uDC93') {
               return
             }
 
-            let data = JSON.parse(e.data)
+            const data = JSON.parse(e.data)
             console.log(`HMR message: ${data.action}; state=${state}`)
             if (data.action === 'building') {
               if (state === States.CHANGED_FILE) {
@@ -103,12 +103,12 @@ describe.skip('command: serve', function() {
       })
     })
 
-    after(done => {
+    after((done) => {
       process.chdir(originalCwd)
       hmrClient.close()
-      kill(server.pid, 'SIGKILL', err => {
+      kill(server.pid, 'SIGKILL', (err) => {
         if (err) return done(err)
-        rimraf(tmpDir, err => {
+        rimraf(tmpDir, (err) => {
           done(err)
         })
       })

@@ -1,16 +1,16 @@
 import path from 'path'
 
-import {PROJECT_TYPES} from '../constants'
-import createProject, {validateProjectType} from '../createProject'
-import {UserError} from '../errors'
-import {directoryExists} from '../utils'
+import { PROJECT_TYPES } from '../constants'
+import createProject, { validateProjectType } from '../createProject'
+import { UserError } from '../errors'
+import { directoryExists } from '../utils'
 
 export default function new_(args, cb) {
   if (args._.length === 1) {
     return cb(new UserError(`usage: nwb new [${[...PROJECT_TYPES].join('|')}] <name>`))
   }
 
-  let projectType = args._[1]
+  const projectType = args._[1]
   try {
     validateProjectType(projectType)
   }
@@ -18,7 +18,7 @@ export default function new_(args, cb) {
     return cb(e)
   }
 
-  let name = args._[2]
+  const name = args._[2]
   if (!name) {
     return cb(new UserError('A project name must be provided'))
   }
@@ -26,8 +26,8 @@ export default function new_(args, cb) {
     return cb(new UserError(`A ${name}/ directory already exists`))
   }
 
-  let targetDir = path.resolve(name)
-  let initialVowel = /^[aeiou]/.test(projectType)
+  const targetDir = path.resolve(name)
+  const initialVowel = /^[aeiou]/.test(projectType)
   console.log(`Creating ${initialVowel ? 'an' : 'a'} ${projectType} project...`)
   createProject(args, projectType, name, targetDir, cb)
 }

@@ -4,8 +4,8 @@ import merge from 'webpack-merge'
 
 import createWebpackConfig from './createWebpackConfig'
 import debug from './debug'
-import {UserError} from './errors'
-import {deepToString, typeOf} from './utils'
+import { UserError } from './errors'
+import { deepToString, typeOf } from './utils'
 
 // The following defaults are combined into a single extglob-style pattern to
 // avoid generating "pattern ... does not match any file" warnings.
@@ -24,9 +24,9 @@ const DEFAULT_TEST_FILES = ['+(src|test?(s))/**/*+(-test|.spec|.test).js']
  * plugin object.
  */
 export function processPluginConfig(configs) {
-  let names = []
-  let plugins = []
-  configs.forEach(config => {
+  const names = []
+  const plugins = []
+  configs.forEach((config) => {
     if (typeOf(config) === 'string') {
       names.push(config)
     }
@@ -57,7 +57,7 @@ export function findPlugin(plugins, findId) {
 /**
  * Handles creation of Karma config based on Karma plugins.
  */
-export function getKarmaPluginConfig({codeCoverage = false, userConfig = {}} = {}) {
+export function getKarmaPluginConfig({ codeCoverage = false, userConfig = {} } = {}) {
   let browsers = ['PhantomJS']
   let frameworks = ['mocha']
   let plugins = [
@@ -70,13 +70,13 @@ export function getKarmaPluginConfig({codeCoverage = false, userConfig = {}} = {
   // Browsers, frameworks and reporters can be configured as a list containing
   // names of bundled plugins, or plugin objects.
   if (userConfig.browsers) {
-    let [browserNames, browserPlugins] = processPluginConfig(userConfig.browsers)
+    const [browserNames, browserPlugins] = processPluginConfig(userConfig.browsers)
     browsers = browserNames
     plugins = plugins.concat(browserPlugins)
   }
 
   if (userConfig.frameworks) {
-    let [frameworkNames, frameworkPlugins] = processPluginConfig(userConfig.frameworks)
+    const [frameworkNames, frameworkPlugins] = processPluginConfig(userConfig.frameworks)
     frameworks = frameworkNames
     plugins = plugins.concat(frameworkPlugins)
   }
@@ -86,7 +86,7 @@ export function getKarmaPluginConfig({codeCoverage = false, userConfig = {}} = {
   }
 
   if (userConfig.reporters) {
-    let [reporterNames, reporterPlugins] = processPluginConfig(userConfig.reporters)
+    const [reporterNames, reporterPlugins] = processPluginConfig(userConfig.reporters)
     reporters = reporterNames
     plugins = plugins.concat(reporterPlugins)
   }
@@ -107,7 +107,7 @@ export function getKarmaPluginConfig({codeCoverage = false, userConfig = {}} = {
   if (browsers.indexOf('PhantomJS') !== -1 && !findPlugin(plugins, 'launcher:PhantomJS')) {
     plugins.push(require('karma-phantomjs-launcher'))
   }
-  if (browsers.some(function matchChrom(b) { return /Chrom/.test(b) }) &&
+  if (browsers.some((b) => { return /Chrom/.test(b) }) &&
       !findPlugin(plugins, 'launcher:Chrome')) {
     plugins.push(require('karma-chrome-launcher'))
   }
@@ -117,50 +117,50 @@ export function getKarmaPluginConfig({codeCoverage = false, userConfig = {}} = {
     reporters.push('coverage')
   }
 
-  return {browsers, frameworks, plugins, reporters}
+  return { browsers, frameworks, plugins, reporters }
 }
 
 export default function createKarmaConfig(args, buildConfig, pluginConfig, userConfig) {
-  let isCi = process.env.CI || process.env.CONTINUOUS_INTEGRATION
-  let codeCoverage = isCi || !!args.coverage
+  const isCi = process.env.CI || process.env.CONTINUOUS_INTEGRATION
+  const codeCoverage = isCi || !!args.coverage
 
-  let userKarma = userConfig.karma || {}
+  const userKarma = userConfig.karma || {}
 
-  let {browsers, frameworks, plugins, reporters} = getKarmaPluginConfig({
+  const { browsers, frameworks, plugins, reporters } = getKarmaPluginConfig({
     codeCoverage,
     userConfig: userKarma,
   })
 
-  let {excludeFromCoverage = DEFAULT_EXCLUDE_FROM_COVERAGE} = userKarma
-  let testFiles = userKarma.testFiles || DEFAULT_TEST_FILES
+  const { excludeFromCoverage = DEFAULT_EXCLUDE_FROM_COVERAGE } = userKarma
+  const testFiles = userKarma.testFiles || DEFAULT_TEST_FILES
 
   // Polyfill by default for browsers which lack features (hello PhantomJS)
-  let files = [require.resolve('babel-polyfill/dist/polyfill.js')]
-  let preprocessors = {}
+  const files = [require.resolve('babel-polyfill/dist/polyfill.js')]
+  const preprocessors = {}
 
   if (userKarma.testContext) {
     files.push(userKarma.testContext)
     preprocessors[userKarma.testContext] = ['webpack', 'sourcemap']
   }
   else {
-    testFiles.forEach(testGlob => {
+    testFiles.forEach((testGlob) => {
       files.push(testGlob)
       preprocessors[testGlob] = ['webpack', 'sourcemap']
     })
   }
 
   // Tweak Babel config for code coverage when necessary
-  buildConfig = {...buildConfig}
+  buildConfig = { ...buildConfig }
   if (!buildConfig.babel) {
     buildConfig.babel = {}
   }
   if (codeCoverage) {
-    let exclude = ['node_modules/', ...excludeFromCoverage, ...testFiles]
+    const exclude = ['node_modules/', ...excludeFromCoverage, ...testFiles]
     if (userKarma.testContext) {
       exclude.push(userKarma.testContext)
     }
     buildConfig.babel.plugins = [
-      [require.resolve('babel-plugin-istanbul'), {exclude}]
+      [require.resolve('babel-plugin-istanbul'), { exclude }]
     ]
   }
 
@@ -169,9 +169,9 @@ export default function createKarmaConfig(args, buildConfig, pluginConfig, userC
     coverageReporter: {
       dir: path.resolve('coverage'),
       reporters: [
-        {type: 'html', subdir: 'html'},
-        {type: 'lcovonly', subdir: '.'},
-        {type: 'text-summary'},
+        { type: 'html', subdir: 'html' },
+        { type: 'lcovonly', subdir: '.' },
+        { type: 'text-summary' },
       ],
     },
     files,

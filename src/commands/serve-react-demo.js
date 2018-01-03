@@ -1,17 +1,17 @@
 import path from 'path'
 
-import {directoryExists} from '../utils'
+import { directoryExists } from '../utils'
 import webpackServer from '../webpackServer'
 
 /**
  * Serve a web demo app from demo/src/index.js.
  */
 export default function serveReactDemo(args, cb) {
-  let pkg = require(path.resolve('package.json'))
+  const pkg = require(path.resolve('package.json'))
 
-  let dist = path.resolve('demo/dist')
+  const dist = path.resolve('demo/dist')
 
-  let config = {
+  const config = {
     babel: {
       presets: [require.resolve('babel-preset-es2015')],
       stage: 1,
@@ -31,7 +31,7 @@ export default function serveReactDemo(args, cb) {
   }
 
   if (directoryExists('demo/public')) {
-    config.plugins.copy = [{from: path.resolve('demo/public'), to: dist}]
+    config.plugins.copy = [{ from: path.resolve('demo/public'), to: dist }]
   }
 
   webpackServer(args, config, cb)

@@ -1,4 +1,4 @@
-var path = require('path')
+const path = require('path')
 
 module.exports = {
   type: 'react-app',
@@ -7,7 +7,7 @@ module.exports = {
   },
   webpack: {
     aliases: {
-      'src': path.resolve('src')
+      src: path.resolve('src')
     }
   }
 }

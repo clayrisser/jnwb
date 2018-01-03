@@ -11,7 +11,7 @@ import merge from 'webpack-merge'
 
 import debug from './debug'
 
-import type {ErrBack} from './types'
+import type { ErrBack } from './types'
 
 /**
  * Check if the given directories exist and filter out any which don't.
@@ -45,7 +45,7 @@ export function clean(
   checkDirectories(dirs, (err, dirs) => {
     if (err != null) return cb(err)
     if (dirs == null || dirs.length === 0) return cb()
-    let spinner = ora(`Cleaning ${desc}`).start()
+    const spinner = ora(`Cleaning ${desc}`).start()
     runSeries(
       dirs.map(dir => cb => fs.remove(dir, cb)),
       (err) => {
@@ -76,7 +76,7 @@ export function clearConsole() {
  * Log objects in their entirety so we can see everything in debug output.
  */
 export function deepToString(object: Object): string {
-  return util.inspect(object, {colors: true, depth: null})
+  return util.inspect(object, { colors: true, depth: null })
 }
 
 /**
@@ -102,7 +102,7 @@ export function getArgsPlugins(
     plugin?: string,
   }
 ): string[] {
-  let plugins = args.plugins || args.plugin
+  const plugins = args.plugins || args.plugin
   if (!plugins) return []
   return plugins.split(',').map(name => name.replace(/^(nwb-)?/, 'nwb-'))
 }
@@ -130,7 +130,7 @@ export function install(
   options: InstallOptions,
   cb: ErrBack,
 ) {
-  let {
+  const {
     args = null,
     check = false,
     cwd = process.cwd(),
@@ -145,11 +145,11 @@ export function install(
   }
 
   if (check) {
-    packages = packages.filter(pkg => {
+    packages = packages.filter((pkg) => {
       // Assumption: we're not dealing with scoped packages, which start with @
-      let name = pkg.split('@')[0]
+      const name = pkg.split('@')[0]
       try {
-        resolve.sync(name, {basedir: cwd})
+        resolve.sync(name, { basedir: cwd })
         return false
       }
       catch (e) {
@@ -171,8 +171,8 @@ export function install(
   npmArgs = npmArgs.concat(packages)
 
   debug(`${cwd} $ npm ${npmArgs.join(' ')}`)
-  let spinner = ora(`Installing ${joinAnd(packages)}`).start()
-  let npm = spawn('npm', npmArgs, {cwd, stdio: ['ignore', 'pipe', 'inherit']})
+  const spinner = ora(`Installing ${joinAnd(packages)}`).start()
+  const npm = spawn('npm', npmArgs, { cwd, stdio: ['ignore', 'pipe', 'inherit'] })
   npm.on('close', (code) => {
     if (code !== 0) {
       spinner.fail()
@@ -196,7 +196,7 @@ export function joinAnd(array: any[], lastClause: string = 'and') {
  * Get the path to an npm module.
  */
 export function modulePath(module: string, basedir: string = process.cwd()): string {
-  return path.dirname(resolve.sync(`${module}/package.json`, {basedir}))
+  return path.dirname(resolve.sync(`${module}/package.json`, { basedir }))
 }
 
 export function pluralise(count: number, suffixes : string = ',s'): string {
@@ -206,7 +206,7 @@ export function pluralise(count: number, suffixes : string = ',s'): string {
 /**
  * Custom merge which replaces arrays instead of concatenating them.
  */
-export const replaceArrayMerge = merge({customizeArray(a, b, key) { return b }})
+export const replaceArrayMerge = merge({ customizeArray(a, b, key) { return b } })
 
 /**
  * Hack to generate simple config file contents by stringifying to JSON, but

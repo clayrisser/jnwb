@@ -4,15 +4,15 @@ import path from 'path'
 import chalk from 'chalk'
 import webpack from 'webpack'
 
-import {CONFIG_FILE_NAME, PROJECT_TYPES} from '../constants'
+import { CONFIG_FILE_NAME, PROJECT_TYPES } from '../constants'
 import debug from '../debug'
-import {ConfigValidationError} from '../errors'
-import {deepToString, joinAnd, pluralise as s, replaceArrayMerge, typeOf} from '../utils'
-import {processBabelConfig} from './babel'
-import {processKarmaConfig} from './karma'
-import {processNpmBuildConfig} from './npm'
+import { ConfigValidationError } from '../errors'
+import { deepToString, joinAnd, pluralise as s, replaceArrayMerge, typeOf } from '../utils'
+import { processBabelConfig } from './babel'
+import { processKarmaConfig } from './karma'
+import { processNpmBuildConfig } from './npm'
 import UserConfigReport from './UserConfigReport'
-import {processWebpackConfig} from './webpack'
+import { processWebpackConfig } from './webpack'
 
 const DEFAULT_REQUIRED = false
 
@@ -20,7 +20,7 @@ const DEFAULT_REQUIRED = false
  * Load a user config file and process it.
  */
 export function getUserConfig(args = {}, options = {}) {
-  let {
+  const {
     check = false,
     pluginConfig = {}, // eslint-disable-line no-unused-vars
     required = DEFAULT_REQUIRED,
@@ -28,11 +28,11 @@ export function getUserConfig(args = {}, options = {}) {
 
   // Try to load default user config, or use a config file path we were given
   let userConfig = {}
-  let configPath = path.resolve(args.config || CONFIG_FILE_NAME)
+  const configPath = path.resolve(args.config || CONFIG_FILE_NAME)
 
   // Bail early if a config file is required by the current command, or if the
   // user specified a custom location, and it doesn't exist.
-  let configFileExists = fs.existsSync(configPath)
+  const configFileExists = fs.existsSync(configPath)
   if ((args.config || required) && !configFileExists) {
     throw new Error(`Couldn't find a config file at ${configPath}`)
   }
@@ -76,10 +76,10 @@ export function getUserConfig(args = {}, options = {}) {
 export function getProjectType(args = {}) {
   // Try to load default user config, or use a config file path we were given
   let userConfig = {}
-  let configPath = path.resolve(args.config || CONFIG_FILE_NAME)
+  const configPath = path.resolve(args.config || CONFIG_FILE_NAME)
 
   // Bail early if a config file doesn't exist
-  let configFileExists = fs.existsSync(configPath)
+  const configFileExists = fs.existsSync(configPath)
   if (!configFileExists) {
     throw new Error(`Couldn't find a config file at ${configPath} to determine project type.`)
   }
@@ -104,7 +104,7 @@ export function getProjectType(args = {}) {
     })
   }
 
-  let report = new UserConfigReport({configFileExists, configPath})
+  const report = new UserConfigReport({ configFileExists, configPath })
 
   if (!PROJECT_TYPES.has(userConfig.type)) {
     report.error('type', userConfig.type, `Must be one of: ${joinAnd(Array.from(PROJECT_TYPES), 'or')}`)
@@ -138,15 +138,15 @@ export function processUserConfig({
     })
   }
 
-  let report = new UserConfigReport({configFileExists, configPath})
+  const report = new UserConfigReport({ configFileExists, configPath })
 
-  let {
+  const {
     type, polyfill,
     babel, devServer, karma, npm, webpack: _webpack, // eslint-disable-line no-unused-vars
     ...unexpectedConfig
   } = userConfig
 
-  let unexpectedProps = Object.keys(unexpectedConfig)
+  const unexpectedProps = Object.keys(unexpectedConfig)
   if (unexpectedProps.length > 0) {
     report.error(
       'nwb config',
@@ -168,8 +168,8 @@ export function processUserConfig({
     )
   }
 
-  let argumentOverrides = {}
-  void ['babel', 'devServer', 'karma', 'npm', 'webpack'].forEach(prop => {
+  const argumentOverrides = {}
+  void ['babel', 'devServer', 'karma', 'npm', 'webpack'].forEach((prop) => {
     // Set defaults for top-level config objects so we don't have to
     // existence-check them everywhere.
     if (!(prop in userConfig)) {
@@ -196,10 +196,10 @@ export function processUserConfig({
     report.hasArgumentOverrides = true
   }
 
-  processBabelConfig({report, userConfig})
-  processKarmaConfig({report, userConfig})
-  processNpmBuildConfig({report, userConfig})
-  processWebpackConfig({pluginConfig, report, userConfig})
+  processBabelConfig({ report, userConfig })
+  processKarmaConfig({ report, userConfig })
+  processNpmBuildConfig({ report, userConfig })
+  processWebpackConfig({ pluginConfig, report, userConfig })
 
   if (report.hasErrors()) {
     throw new ConfigValidationError(report)

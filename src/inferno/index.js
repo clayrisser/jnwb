@@ -1,5 +1,5 @@
 // @flow
-import {modulePath} from '../utils'
+import { modulePath } from '../utils'
 
 function getBaseConfig() {
   return {
@@ -9,7 +9,7 @@ function getBaseConfig() {
     // Allow compatible React components to be used
     resolve: {
       alias: {
-        'react': 'inferno-compat',
+        react: 'inferno-compat',
         'react-dom': 'inferno-compat',
       }
     },
@@ -26,7 +26,7 @@ function getQuickConfig() {
     defaultTitle: 'Inferno App',
     renderShim: require.resolve('./renderShim'),
     renderShimAliases: {
-      'inferno': modulePath('inferno'),
+      inferno: modulePath('inferno'),
     }
   }
 }

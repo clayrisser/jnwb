@@ -1,8 +1,8 @@
 /* global NWB_QUICK_MOUNT_ID */
 
-let Inferno = require('inferno')
-let {createVNode, render} = Inferno
-let parent = document.getElementById(NWB_QUICK_MOUNT_ID)
+const Inferno = require('inferno')
+const { createVNode, render } = Inferno
+const parent = document.getElementById(NWB_QUICK_MOUNT_ID)
 let vnode = null
 
 function renderEntry(exported) {

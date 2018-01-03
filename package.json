@@ -41,7 +41,7 @@
     "url": "https://github.com/insin/nwb.git"
   },
   "scripts": {
-    "build": "npm run flow && npm run lint && rimraf lib && babel src --out-dir lib --quiet",
+    "build": "npm run flow && rimraf lib && babel src --out-dir lib --quiet",
     "build:watch": "rimraf lib && babel src --watch --out-dir lib",
     "flow": "flow",
     "lint": "eslint *.js src tests",

@@ -10,7 +10,7 @@ import createWebpackConfig, {
 } from '../src/createWebpackConfig'
 
 function getLoaders(rules) {
-  return rules.map(rule => {
+  return rules.map((rule) => {
     // Style chains
     if (rule.use) {
       return rule.use.map(loader => loader.loader).join('\n')
@@ -21,7 +21,7 @@ function getLoaders(rules) {
 
 describe('createWebpackConfig()', () => {
   context('with only entry config', () => {
-    let config = createWebpackConfig({entry: ['index.js']})
+    const config = createWebpackConfig({ entry: ['index.js'] })
     it('creates a default webpack build config', () => {
       expect(Object.keys(config)).toEqual(['module', 'output', 'plugins', 'resolve', 'resolveLoader', 'entry'])
       expect(getLoaders(config.module.rules))
@@ -41,7 +41,7 @@ describe('createWebpackConfig()', () => {
   })
 
   context('with a default rule disabled', () => {
-    let config = createWebpackConfig({entry: ['index.js']}, {}, {webpack: {rules: {babel: false}}})
+    const config = createWebpackConfig({ entry: ['index.js'] }, {}, { webpack: { rules: { babel: false } } })
     it('excludes the rule', () => {
       expect(getLoaders(config.module.rules))
         .toNotContain()
@@ -54,7 +54,7 @@ describe('createWebpackConfig()', () => {
   })
 
   context('with server config', () => {
-    let config = createWebpackConfig({entry: ['index.js'], server: {}})
+    const config = createWebpackConfig({ entry: ['index.js'], server: {} })
     it('creates a server webpack config', () => {
       expect(getLoaders(config.module.rules))
         .toContain('babel-loader')
@@ -67,14 +67,14 @@ describe('createWebpackConfig()', () => {
   })
 
   context('with polyfill=false config', () => {
-    let config = createWebpackConfig({entry: ['index.js'], polyfill: false})
+    const config = createWebpackConfig({ entry: ['index.js'], polyfill: false })
     it('skips default polyfilling', () => {
       expect(config.entry).toEqual(['index.js'])
     })
   })
 
   context('configuring styles', () => {
-    let cssPreprocessorPluginConfig = {
+    const cssPreprocessorPluginConfig = {
       cssPreprocessors: {
         sass: {
           test: /\.scss$/,
@@ -84,7 +84,7 @@ describe('createWebpackConfig()', () => {
     }
 
     context("with user config for the default CSS rule's loaders", () => {
-      let config = createWebpackConfig({server: true}, {}, {
+      const config = createWebpackConfig({ server: true }, {}, {
         webpack: {
           rules: {
             css: {
@@ -97,36 +97,36 @@ describe('createWebpackConfig()', () => {
         }
       })
       it('applies user config to loaders', () => {
-        let rules = config.module.rules.filter(rule => rule.test.test('.css'))
+        const rules = config.module.rules.filter(rule => rule.test.test('.css'))
         expect(rules.length).toBe(1)
         expect(rules[0].use).toMatch([
-          {loader: /style-loader/},
+          { loader: /style-loader/ },
           {
             loader: /css-loader/,
-            options: {a: 1, b: 2}
+            options: { a: 1, b: 2 }
           },
-          {loader: /postcss-loader/},
+          { loader: /postcss-loader/ },
         ])
       })
     })
 
     context('with plugin config for a CSS preprocessor', () => {
-      let config = createWebpackConfig({server: true}, cssPreprocessorPluginConfig)
+      const config = createWebpackConfig({ server: true }, cssPreprocessorPluginConfig)
 
       it('creates a default style rule', () => {
-        let rules = config.module.rules.filter(rule => rule.test.test('.scss'))
+        const rules = config.module.rules.filter(rule => rule.test.test('.scss'))
         expect(rules.length).toBe(1)
         expect(rules[0].use).toMatch([
-          {loader: /style-loader/},
-          {loader: /css-loader/},
-          {loader: /postcss-loader/},
-          {loader: /path\/to\/sass-loader\.js$/},
+          { loader: /style-loader/ },
+          { loader: /css-loader/ },
+          { loader: /postcss-loader/ },
+          { loader: /path\/to\/sass-loader\.js$/ },
         ])
       })
     })
 
     context('with plugin config for a CSS preprocessor and user config for its loaders', () => {
-      let config = createWebpackConfig({server: true}, cssPreprocessorPluginConfig, {
+      const config = createWebpackConfig({ server: true }, cssPreprocessorPluginConfig, {
         webpack: {
           rules: {
             sass: {
@@ -139,22 +139,22 @@ describe('createWebpackConfig()', () => {
         }
       })
       it('applies user config to the preprocessor rule', () => {
-        let rule = config.module.rules.filter(rule => rule.test.test('.scss'))[0]
+        const rule = config.module.rules.filter(rule => rule.test.test('.scss'))[0]
         expect(rule).toExist()
         expect(rule.use).toMatch([
-          {loader: /style-loader/},
-          {loader: /css-loader/},
-          {loader: /postcss-loader/},
+          { loader: /style-loader/ },
+          { loader: /css-loader/ },
+          { loader: /postcss-loader/ },
           {
             loader: /path\/to\/sass-loader\.js$/,
-            options: {a: 1, b: 2},
+            options: { a: 1, b: 2 },
           },
         ])
       })
     })
 
     context('with custom style rules', () => {
-      let config = createWebpackConfig({server: true}, {}, {
+      const config = createWebpackConfig({ server: true }, {}, {
         webpack: {
           styles: {
             css: [
@@ -178,11 +178,11 @@ describe('createWebpackConfig()', () => {
       })
 
       it('creates a rule for each given configuration object', () => {
-        let rules = config.module.rules.filter(rule => rule.test.test('.css'))
+        const rules = config.module.rules.filter(rule => rule.test.test('.css'))
         expect(rules.length).toBe(2)
         expect(rules[0].include).toBe('src/components')
         expect(rules[0].use).toMatch([
-          {loader: /style-loader/},
+          { loader: /style-loader/ },
           {
             loader: /css-loader/,
             options: {
@@ -190,13 +190,13 @@ describe('createWebpackConfig()', () => {
               localIdentName: '[hash:base64:5]',
             }
           },
-          {loader: /postcss-loader/},
+          { loader: /postcss-loader/ },
         ])
         expect(rules[1].exclude).toBe('src/components')
         expect(rules[1].use).toMatch([
-          {loader: /style-loader/},
-          {loader: /css-loader/},
-          {loader: /postcss-loader/},
+          { loader: /style-loader/ },
+          { loader: /css-loader/ },
+          { loader: /postcss-loader/ },
         ])
       })
     })
@@ -216,37 +216,37 @@ describe('createWebpackConfig()', () => {
       }
 
       context('with plugin config for a CSS preprocessor', () => {
-        let config = createWebpackConfig({server: true}, cssPreprocessorPluginConfig, {
+        const config = createWebpackConfig({ server: true }, cssPreprocessorPluginConfig, {
           webpack: {
             styles: 'old'
           }
         })
         it('creates a style loading pipeline', () => {
-          let rule = findSassRule(config.module.rules)
+          const rule = findSassRule(config.module.rules)
           expect(rule).toExist()
           expect(rule.use).toMatch([
-            {loader: /style-loader/},
-            {loader: /css-loader/},
-            {loader: /postcss-loader/},
-            {loader: /path\/to\/sass-loader\.js$/},
+            { loader: /style-loader/ },
+            { loader: /css-loader/ },
+            { loader: /postcss-loader/ },
+            { loader: /path\/to\/sass-loader\.js$/ },
           ])
           expect(rule.exclude.test('node_modules')).toBe(true, 'app rule should exclude node_modules')
         })
         it('creates a vendor style loading pipeline', () => {
-          let rule = findVendorSassRule(config.module.rules)
+          const rule = findVendorSassRule(config.module.rules)
           expect(rule).toExist()
           expect(rule.use).toMatch([
-            {loader: /style-loader/},
-            {loader: /css-loader/},
-            {loader: /postcss-loader/},
-            {loader: /path\/to\/sass-loader\.js$/},
+            { loader: /style-loader/ },
+            { loader: /css-loader/ },
+            { loader: /postcss-loader/ },
+            { loader: /path\/to\/sass-loader\.js$/ },
           ])
           expect(rule.include.test('node_modules')).toBe(true, 'vendor rule should include node_modules')
         })
       })
 
       context('with plugin config for a CSS preprocessor and user config for its rule', () => {
-        let config = createWebpackConfig({server: true}, cssPreprocessorPluginConfig, {
+        const config = createWebpackConfig({ server: true }, cssPreprocessorPluginConfig, {
           webpack: {
             styles: 'old',
             rules: {
@@ -260,26 +260,26 @@ describe('createWebpackConfig()', () => {
           }
         })
         it('applies user config to the preprocessor rule', () => {
-          let rule = findSassRule(config.module.rules)
+          const rule = findSassRule(config.module.rules)
           expect(rule).toExist()
           expect(rule.use).toMatch([
-            {loader: /style-loader/},
-            {loader: /css-loader/},
-            {loader: /postcss-loader/},
+            { loader: /style-loader/ },
+            { loader: /css-loader/ },
+            { loader: /postcss-loader/ },
             {
               loader: /path\/to\/sass-loader\.js$/,
-              options: {a: 1, b: 2},
+              options: { a: 1, b: 2 },
             },
           ])
         })
         it('only applies user config to the appropriate rule', () => {
-          let rule = findVendorSassRule(config.module.rules)
+          const rule = findVendorSassRule(config.module.rules)
           expect(rule).toExist()
           expect(rule.use).toMatch([
-            {loader: /style-loader/},
-            {loader: /css-loader/},
-            {loader: /postcss-loader/},
-            {loader: /path\/to\/sass-loader\.js$/},
+            { loader: /style-loader/ },
+            { loader: /css-loader/ },
+            { loader: /postcss-loader/ },
+            { loader: /path\/to\/sass-loader\.js$/ },
           ])
         })
       })
@@ -288,7 +288,7 @@ describe('createWebpackConfig()', () => {
 
   context('with aliases config', () => {
     it('sets up resolve.alias', () => {
-      let config = createWebpackConfig({}, {}, {
+      const config = createWebpackConfig({}, {}, {
         webpack: {
           aliases: {
             src: 'test'
@@ -298,7 +298,7 @@ describe('createWebpackConfig()', () => {
       expect(config.resolve.alias.src).toEqual('test')
     })
     it('overwrites build resolve.alias config', () => {
-      let config = createWebpackConfig({
+      const config = createWebpackConfig({
         resolve: {
           alias: {
             src: 'fail'
@@ -317,7 +317,7 @@ describe('createWebpackConfig()', () => {
 
   context('with aliases config', () => {
     it('overwrites build output.publicPath config', () => {
-      let config = createWebpackConfig({
+      const config = createWebpackConfig({
         output: {
           publicPath: 'fail'
         }
@@ -332,7 +332,7 @@ describe('createWebpackConfig()', () => {
 
   context('with compat config', () => {
     it('creates and merges compat config', () => {
-      let config = createWebpackConfig({}, {}, {
+      const config = createWebpackConfig({}, {}, {
         webpack: {
           compat: {
             enzyme: true,
@@ -345,19 +345,19 @@ describe('createWebpackConfig()', () => {
 
   context('with extra config', () => {
     it('merges extra config', () => {
-      let config = createWebpackConfig({}, {}, {
+      const config = createWebpackConfig({}, {}, {
         webpack: {
           extra: {
             resolve: {
               alias: {
-                'test': './test',
+                test: './test',
               }
             },
             foo: 'bar',
           }
         }
       })
-      expect(config.resolve.alias).toEqual({'test': './test'})
+      expect(config.resolve.alias).toEqual({ test: './test' })
       expect(config.foo).toEqual('bar')
     })
   })
@@ -365,12 +365,12 @@ describe('createWebpackConfig()', () => {
 
 describe('loaderConfigName()', () => {
   it('returns the given value if a falsy prefix was given', () => {
-    let name = loaderConfigName(null)
+    const name = loaderConfigName(null)
     expect(name('css')).toEqual('css')
     expect(name('style')).toEqual('style')
   })
   it('prefixes the value if a prefix was given', () => {
-    let name = loaderConfigName('vendor')
+    const name = loaderConfigName('vendor')
     expect(name('css')).toEqual('vendor-css')
     expect(name('style')).toEqual('vendor-style')
   })
@@ -387,17 +387,17 @@ describe('loaderConfigName()', () => {
 describe('mergeRuleConfig()', () => {
   const TEST_RE = /\.test$/
   const EXCLUDE_RE = /node_modules/
-  let rule = {test: TEST_RE, loader: 'one', exclude: EXCLUDE_RE}
+  const rule = { test: TEST_RE, loader: 'one', exclude: EXCLUDE_RE }
   it('merges default, build and user config for a rule', () => {
     expect(mergeRuleConfig(
-      {...rule, options: {a: 1}},
-      {options: {b: 2}},
-      {options: {c: 3}},
+      { ...rule, options: { a: 1 } },
+      { options: { b: 2 } },
+      { options: { c: 3 } },
     )).toEqual({
       test: TEST_RE,
       loader: 'one',
       exclude: EXCLUDE_RE,
-      options: {a: 1, b: 2, c: 3},
+      options: { a: 1, b: 2, c: 3 },
     })
   })
   it('only adds an options prop if the merged options have props', () => {
@@ -408,7 +408,7 @@ describe('mergeRuleConfig()', () => {
     })
   })
   it('removes the merged options when it has no properties', () => {
-    expect(mergeRuleConfig(rule, {}, {options: {}})).toEqual({
+    expect(mergeRuleConfig(rule, {}, { options: {} })).toEqual({
       test: TEST_RE,
       loader: 'one',
       exclude: EXCLUDE_RE,
@@ -417,8 +417,8 @@ describe('mergeRuleConfig()', () => {
   it('replaces lists when merging options instead of concatenating them', () => {
     expect(mergeRuleConfig(
       rule,
-      {options: {optional: ['two']}},
-      {options: {optional: ['three']}}
+      { options: { optional: ['two'] } },
+      { options: { optional: ['three'] } }
     )).toEqual({
       test: TEST_RE,
       loader: 'one',
@@ -431,8 +431,8 @@ describe('mergeRuleConfig()', () => {
   it('deep merges options', () => {
     expect(mergeRuleConfig(
       rule,
-      {options: {nested: {a: true}}},
-      {options: {nested: {b: true}}},
+      { options: { nested: { a: true } } },
+      { options: { nested: { b: true } } },
     )).toEqual({
       test: TEST_RE,
       loader: 'one',
@@ -447,21 +447,21 @@ describe('mergeRuleConfig()', () => {
   })
   it('omits default options and build config when configuring a custom loader', () => {
     expect(mergeRuleConfig(
-      {...rule, options: {a: 1}},
-      {options: {b: 2}},
-      {loader: 'custom', options: {c: 3}},
+      { ...rule, options: { a: 1 } },
+      { options: { b: 2 } },
+      { loader: 'custom', options: { c: 3 } },
     )).toEqual({
       test: TEST_RE,
       loader: 'custom',
       exclude: EXCLUDE_RE,
-      options: {c: 3},
+      options: { c: 3 },
     })
   })
   it('omits default options and build config when configuring a custom loader chain', () => {
     expect(mergeRuleConfig(
-      {...rule, options: {a: 1}},
-      {options: {b: 2}},
-      {use: ['three', 'two', 'one']},
+      { ...rule, options: { a: 1 } },
+      { options: { b: 2 } },
+      { use: ['three', 'two', 'one'] },
     )).toEqual({
       test: TEST_RE,
       use: ['three', 'two', 'one'],
@@ -471,15 +471,15 @@ describe('mergeRuleConfig()', () => {
 })
 
 describe('mergeLoaderConfig()', () => {
-  let loader = {loader: 'one'}
+  const loader = { loader: 'one' }
   it('merges default, build and user config for a loader', () => {
     expect(mergeLoaderConfig(
-      {...loader, options: {a: 1}},
-      {options: {b: 2}},
-      {options: {c: 3}},
+      { ...loader, options: { a: 1 } },
+      { options: { b: 2 } },
+      { options: { c: 3 } },
     )).toEqual({
       loader: 'one',
-      options: {a: 1, b: 2, c: 3},
+      options: { a: 1, b: 2, c: 3 },
     })
   })
   it('only adds an options prop if the merged options have props', () => {
@@ -488,15 +488,15 @@ describe('mergeLoaderConfig()', () => {
     })
   })
   it('removes the merged options when it has no properties', () => {
-    expect(mergeLoaderConfig(loader, {}, {options: {}})).toEqual({
+    expect(mergeLoaderConfig(loader, {}, { options: {} })).toEqual({
       loader: 'one',
     })
   })
   it('replaces lists when merging options instead of concatenating them', () => {
     expect(mergeLoaderConfig(
-      {...loader, options: {optional: ['two']}},
+      { ...loader, options: { optional: ['two'] } },
       {},
-      {options: {optional: ['three']}}
+      { options: { optional: ['three'] } }
     )).toEqual({
       loader: 'one',
       options: {
@@ -507,8 +507,8 @@ describe('mergeLoaderConfig()', () => {
   it('deep merges options', () => {
     expect(mergeLoaderConfig(
       loader,
-      {options: {nested: {a: true}}},
-      {options: {nested: {b: true}}},
+      { options: { nested: { a: true } } },
+      { options: { nested: { b: true } } },
     )).toEqual({
       loader: 'one',
       options: {
@@ -521,12 +521,12 @@ describe('mergeLoaderConfig()', () => {
   })
   it('omits default options configuring a custom loader', () => {
     expect(mergeLoaderConfig(
-      {...loader, options: {a: 1}},
-      {options: {b: 2}},
-      {loader: 'custom', options: {c: 3}},
+      { ...loader, options: { a: 1 } },
+      { options: { b: 2 } },
+      { loader: 'custom', options: { c: 3 } },
     )).toEqual({
       loader: 'custom',
-      options: {c: 3},
+      options: { c: 3 },
     })
   })
 })
@@ -536,13 +536,13 @@ describe('getCompatConfig()', () => {
     expect(getCompatConfig()).toBe(null)
   })
   it('skips falsy config', () => {
-    expect(getCompatConfig({enzyme: false, intl: false, moment: false, 'react-intl': false, sinon: false})).toBe(null)
+    expect(getCompatConfig({ enzyme: false, intl: false, moment: false, 'react-intl': false, sinon: false })).toBe(null)
   })
   it('supports enzyme', () => {
-    expect(getCompatConfig({enzyme: true})).toEqual(COMPAT_CONFIGS.enzyme)
+    expect(getCompatConfig({ enzyme: true })).toEqual(COMPAT_CONFIGS.enzyme)
   })
   it('supports intl', () => {
-    let config = getCompatConfig({intl: {locales: ['de', 'en-gb']}})
+    const config = getCompatConfig({ intl: { locales: ['de', 'en-gb'] } })
     if (config == null) throw new Error('Config is null')
     expect(config.plugins).toExist()
     expect(config.plugins.length).toBe(1)
@@ -550,7 +550,7 @@ describe('getCompatConfig()', () => {
     expect(config.plugins[0].newContentRegExp).toEqual(/^\.\/(de|en-gb)$/)
   })
   it('supports moment', () => {
-    let config = getCompatConfig({moment: {locales: ['de', 'en-gb']}})
+    const config = getCompatConfig({ moment: { locales: ['de', 'en-gb'] } })
     if (config == null) throw new Error('Config is null')
     expect(config.plugins).toExist()
     expect(config.plugins.length).toBe(1)
@@ -558,7 +558,7 @@ describe('getCompatConfig()', () => {
     expect(config.plugins[0].newContentRegExp).toEqual(/^\.\/(de|en-gb)$/)
   })
   it('supports react-intl', () => {
-    let config = getCompatConfig({'react-intl': {locales: ['de', 'en-gb']}})
+    const config = getCompatConfig({ 'react-intl': { locales: ['de', 'en-gb'] } })
     if (config == null) throw new Error('Config is null')
     expect(config.plugins).toExist()
     expect(config.plugins.length).toBe(1)
@@ -566,10 +566,10 @@ describe('getCompatConfig()', () => {
     expect(config.plugins[0].newContentRegExp).toEqual(/^\.\/(de|en-gb)$/)
   })
   it('supports sinon', () => {
-    expect(getCompatConfig({sinon: true})).toEqual(COMPAT_CONFIGS.sinon)
+    expect(getCompatConfig({ sinon: true })).toEqual(COMPAT_CONFIGS.sinon)
   })
   it('merges multiple compat configs ', () => {
-    expect(getCompatConfig({enzyme: true, sinon: true}))
-      .toEqual({...COMPAT_CONFIGS.enzyme, ...COMPAT_CONFIGS.sinon})
+    expect(getCompatConfig({ enzyme: true, sinon: true }))
+      .toEqual({ ...COMPAT_CONFIGS.enzyme, ...COMPAT_CONFIGS.sinon })
   })
 })

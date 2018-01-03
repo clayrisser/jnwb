@@ -1,8 +1,8 @@
 // @flow
-import {build} from '../appCommands'
+import { build } from '../appCommands'
 import reactConfig from '../react'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Build a React app.

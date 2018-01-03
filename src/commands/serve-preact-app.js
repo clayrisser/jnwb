@@ -1,8 +1,8 @@
 // @flow
 import preactConfig from '../preact'
-import {serve} from '../appCommands'
+import { serve } from '../appCommands'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Serve a Preact app.

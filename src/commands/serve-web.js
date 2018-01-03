@@ -1,8 +1,8 @@
 // @flow
-import {serve} from '../quickCommands'
+import { serve } from '../quickCommands'
 import webConfig from '../web'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Serve a standalone vanilla JavaScript app.

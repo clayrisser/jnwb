@@ -1,8 +1,8 @@
 // @flow
-import {serve} from '../appCommands'
+import { serve } from '../appCommands'
 import reactConfig from '../react'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Serve a React app.

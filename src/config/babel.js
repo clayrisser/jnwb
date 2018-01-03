@@ -1,11 +1,11 @@
 import chalk from 'chalk'
 
-import {pluralise as s, typeOf} from '../utils'
+import { pluralise as s, typeOf } from '../utils'
 
 const BABEL_RUNTIME_OPTIONS = new Set(['helpers', 'polyfill'])
 
-export function processBabelConfig({report, userConfig}) {
-  let {
+export function processBabelConfig({ report, userConfig }) {
+  const {
     cherryPick,
     env,
     loose,
@@ -19,7 +19,7 @@ export function processBabelConfig({report, userConfig}) {
     ...unexpectedConfig
   } = userConfig.babel
 
-  let unexpectedProps = Object.keys(unexpectedConfig)
+  const unexpectedProps = Object.keys(unexpectedConfig)
   if (unexpectedProps.length > 0) {
     report.error(
       'babel',

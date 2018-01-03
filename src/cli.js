@@ -1,18 +1,18 @@
 // @flow
 import path from 'path'
 
-import {cyan as opt, green as cmd, red, yellow as req} from 'chalk'
+import { cyan as opt, green as cmd, red, yellow as req } from 'chalk'
 import parseArgs from 'minimist'
 import semver from 'semver'
 
-import {CONFIG_FILE_NAME} from './constants'
-import {UserError} from './errors'
-import {modulePath} from './utils'
+import { CONFIG_FILE_NAME } from './constants'
+import { UserError } from './errors'
+import { modulePath } from './utils'
 
-import type {ErrBack} from './types'
+import type { ErrBack } from './types'
 
 export default function cli(argv: string[], cb: ErrBack) {
-  let args = parseArgs(argv, {
+  const args = parseArgs(argv, {
     alias: {
       c: 'config',
       h: 'help',
@@ -21,10 +21,10 @@ export default function cli(argv: string[], cb: ErrBack) {
     boolean: ['help', 'version'],
   })
 
-  let command = args._[0]
+  const command = args._[0]
 
   if (args.version || /^v(ersion)?$/.test(command)) {
-    let pkg = require('../package.json')
+    const pkg = require('../package.json')
     console.log(`v${pkg.version}`)
     process.exit(0)
   }
@@ -192,7 +192,7 @@ Helper commands:
     process.exit(args.help || command ? 0 : 1)
   }
 
-  let unknownCommand = () => {
+  const unknownCommand = () => {
     console.error(`${red('Unknown command:')} ${req(command)}`)
     process.exit(1)
   }
@@ -226,7 +226,7 @@ Helper commands:
       // nwb isn't installed locally to where the command is being run
     }
 
-    let runningNwbPath = path.dirname(require.resolve('../package'))
+    const runningNwbPath = path.dirname(require.resolve('../package'))
 
     if (localNwbPath !== runningNwbPath) {
       let pkg = null
@@ -236,12 +236,12 @@ Helper commands:
       catch (e) {
         // pass
       }
-      let requiredNwbVersion = pkg && (
+      const requiredNwbVersion = pkg && (
         (pkg.devDependencies && pkg.devDependencies.nwb) ||
         (pkg.dependencies && pkg.dependencies.nwb)
       )
       if (requiredNwbVersion) {
-        let runningNwbVersion = require('../package').version
+        const runningNwbVersion = require('../package').version
         if (!semver.satisfies(runningNwbVersion, requiredNwbVersion)) {
           return cb(new UserError(
             `The version of nwb you're running (v${runningNwbVersion}, from ${runningNwbPath}) ` +
@@ -252,7 +252,7 @@ Helper commands:
     }
   }
 
-  let commandModule = require(commandModulePath)
+  const commandModule = require(commandModulePath)
   // Quick commands handle running themselves
   if (typeof commandModule === 'function') {
     commandModule(args, cb)

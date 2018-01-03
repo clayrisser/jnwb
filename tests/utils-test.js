@@ -1,8 +1,8 @@
 // @flow
 import expect from 'expect'
 
-import {joinAnd} from '../src/utils'
-import {createBanner, createExternals} from '../src/webpackUtils'
+import { joinAnd } from '../src/utils'
+import { createBanner, createExternals } from '../src/webpackUtils'
 
 describe('utils', () => {
   describe('joinAnd()', () => {
@@ -51,7 +51,7 @@ describe('webpackUtils', () => {
       expect(createExternals()).toEqual({})
     })
     it('uses the webpack externals format', () => {
-      expect(createExternals({react: 'React'})).toEqual({
+      expect(createExternals({ react: 'React' })).toEqual({
         react: {
           amd: 'react',
           commonjs: 'react',

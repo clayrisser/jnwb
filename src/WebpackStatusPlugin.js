@@ -1,10 +1,10 @@
 // @flow
 import chalk from 'chalk'
 
-import {clearConsole} from './utils'
-import {logErrorsAndWarnings} from './webpackUtils'
+import { clearConsole } from './utils'
+import { logErrorsAndWarnings } from './webpackUtils'
 
-import type {ErrBack} from './types'
+import type { ErrBack } from './types'
 
 type StatusPluginOptions = {
   disableClearConsole?: boolean,
@@ -22,7 +22,7 @@ export default class StatusPlugin {
   isInitialBuild: boolean;
 
   constructor(options: StatusPluginOptions = {}) {
-    let {
+    const {
       disableClearConsole = false,
       quiet = false,
       successMessage = '',
@@ -68,11 +68,11 @@ export default class StatusPlugin {
   done = (stats: Object) => {
     this.clearConsole()
 
-    let hasErrors = stats.hasErrors()
-    let hasWarnings = stats.hasWarnings()
+    const hasErrors = stats.hasErrors()
+    const hasWarnings = stats.hasWarnings()
 
     if (!hasErrors && !hasWarnings) {
-      let time = stats.endTime - stats.startTime
+      const time = stats.endTime - stats.startTime
       this.log(chalk.green(`Compiled successfully in ${time} ms.`))
     }
     else {

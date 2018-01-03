@@ -1,10 +1,10 @@
-var express = require('express')
+const express = require('express')
 
-var app = express()
+const app = express()
 
 app.use(require(process.env.NWB_EXPRESS_MIDDLEWARE)(express))
 
-app.listen(3001, 'localhost', function(err) {
+app.listen(3001, 'localhost', (err) => {
   if (err) {
     console.error('error starting express-middleware test server')
   }

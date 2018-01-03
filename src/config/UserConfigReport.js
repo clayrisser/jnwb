@@ -3,10 +3,10 @@ import util from 'util'
 import chalk from 'chalk'
 import figures from 'figures'
 
-import {pluralise as s} from '../utils'
+import { pluralise as s } from '../utils'
 
 export default class UserConfigReport {
-  constructor({configFileExists, configPath} = {}) {
+  constructor({ configFileExists, configPath } = {}) {
     this.configFileExists = configFileExists
     this.configPath = configPath
     this.deprecations = []
@@ -16,11 +16,11 @@ export default class UserConfigReport {
   }
 
   deprecated(path, ...messages) {
-    this.deprecations.push({path, messages})
+    this.deprecations.push({ path, messages })
   }
 
   error(path, value, message) {
-    this.errors.push({path, value, message})
+    this.errors.push({ path, value, message })
   }
 
   hasErrors() {
@@ -32,7 +32,7 @@ export default class UserConfigReport {
   }
 
   hint(path, ...messages) {
-    this.hints.push({path, messages})
+    this.hints.push({ path, messages })
   }
 
   getConfigSource() {
@@ -50,7 +50,7 @@ export default class UserConfigReport {
   }
 
   getReport() {
-    let report = []
+    const report = []
 
     report.push(chalk.underline(`nwb config report for ${this.getConfigSource()}`))
     report.push('')
@@ -61,37 +61,37 @@ export default class UserConfigReport {
     }
 
     if (this.errors.length) {
-      let count = this.errors.length > 1 ? `${this.errors.length} ` : ''
+      const count = this.errors.length > 1 ? `${this.errors.length} ` : ''
       report.push(chalk.red.underline(`${count}Error${s(this.errors.length)}`))
       report.push('')
     }
-    this.errors.forEach(({path, value, message}) => {
+    this.errors.forEach(({ path, value, message }) => {
       report.push(`${chalk.red(`${figures.cross} ${path}`)} ${chalk.cyan('=')} ${util.inspect(value)}`)
       report.push(`  ${message}`)
       report.push('')
     })
 
     if (this.deprecations.length) {
-      let count = this.deprecations.length > 1 ? `${this.deprecations.length} ` : ''
+      const count = this.deprecations.length > 1 ? `${this.deprecations.length} ` : ''
       report.push(chalk.yellow.underline(`${count}Deprecation Warning${s(this.deprecations.length)}`))
       report.push('')
     }
-    this.deprecations.forEach(({path, messages}) => {
+    this.deprecations.forEach(({ path, messages }) => {
       report.push(chalk.yellow(`${figures.warning} ${path}`))
-      messages.forEach(message => {
+      messages.forEach((message) => {
         report.push(`  ${message}`)
       })
       report.push('')
     })
 
     if (this.hints.length) {
-      let count = this.hints.length > 1 ? `${this.hints.length} ` : ''
+      const count = this.hints.length > 1 ? `${this.hints.length} ` : ''
       report.push(chalk.cyan.underline(`${count}Hint${s(this.hints.length)}`))
       report.push('')
     }
-    this.hints.forEach(({path, messages}) => {
+    this.hints.forEach(({ path, messages }) => {
       report.push(chalk.cyan(`${figures.info} ${path}`))
-      messages.forEach(message => {
+      messages.forEach((message) => {
         report.push(`  ${message}`)
       })
       report.push('')

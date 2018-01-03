@@ -1,4 +1,4 @@
-import {execSync} from 'child_process'
+import { execSync } from 'child_process'
 import fs from 'fs'
 import path from 'path'
 
@@ -13,7 +13,7 @@ import kill from 'tree-kill'
 
 import cli from '../../src/cli'
 
-let stripHashes = (files) => files.map(file => file.replace(/\.\w{8}\./, '.'))
+const stripHashes = files => files.map(file => file.replace(/\.\w{8}\./, '.'))
 
 const States = {
   INIT: 'INIT',
@@ -30,7 +30,7 @@ describe('sample projects', function() {
     let originalNodeEnv
     let tmpDir
 
-    before(done => {
+    before((done) => {
       originalCwd = process.cwd()
       originalNodeEnv = process.env.NODE_ENV
       delete process.env.NODE_ENV
@@ -38,28 +38,28 @@ describe('sample projects', function() {
       copyTemplateDir(path.join(__dirname, '../fixtures/projects/async-await'), tmpDir, {}, (err) => {
         if (err) return done(err)
         process.chdir(tmpDir)
-        execSync('npm install', {stdio: 'inherit'})
+        execSync('npm install', { stdio: 'inherit' })
         done()
       })
     })
 
-    after(done => {
+    after((done) => {
       process.chdir(originalCwd)
       process.env.NODE_ENV = originalNodeEnv
-      rimraf(tmpDir, err => {
+      rimraf(tmpDir, (err) => {
         done(err)
       })
     })
 
-    it('builds successfully', done => {
-      cli(['build'], err => {
+    it('builds successfully', (done) => {
+      cli(['build'], (err) => {
         expect(err).toNotExist()
         done()
       })
     })
 
-    it('tests successfully', done => {
-      cli(['test'], err => {
+    it('tests successfully', (done) => {
+      cli(['test'], (err) => {
         expect(err).toNotExist()
         done()
       })
@@ -74,18 +74,18 @@ describe('sample projects', function() {
     let state = States.INIT
     let buildResults
 
-    before(done => {
+    before((done) => {
       process.env.NWB_EXPRESS_MIDDLEWARE = require.resolve('../../express')
       tmpDir = temp.mkdirSync('express-middleware')
-      copyTemplateDir(path.join(__dirname, '../fixtures/projects/express-middleware'), tmpDir, {}, err => {
+      copyTemplateDir(path.join(__dirname, '../fixtures/projects/express-middleware'), tmpDir, {}, (err) => {
         if (err) return done(err)
 
-        execSync('npm install', {cwd: tmpDir, stdio: 'inherit'})
+        execSync('npm install', { cwd: tmpDir, stdio: 'inherit' })
 
-        server = spawn('node', ['server.js'], {cwd: tmpDir})
+        server = spawn('node', ['server.js'], { cwd: tmpDir })
 
         // Start the HMR EventSource client when the initial build completes
-        server.stdout.on('data', data => {
+        server.stdout.on('data', (data) => {
           console.log(`server stdout: ${data}`)
           if (state === States.INIT && /Compiled successfully/.test(data)) {
             state = States.INIT_OK
@@ -94,7 +94,7 @@ describe('sample projects', function() {
         })
 
         // Fail if there's any error logging
-        server.stderr.on('data', data => {
+        server.stderr.on('data', (data) => {
           done(new Error(`stderr output received: ${data}`))
         })
 
@@ -107,25 +107,25 @@ describe('sample projects', function() {
             setTimeout(() => {
               state = States.CHANGED_FILE
               console.log('HMR open: set state = CHANGED_FILE')
-              let content = fs.readFileSync(path.join(tmpDir, 'src/App.js'), 'utf-8')
+              const content = fs.readFileSync(path.join(tmpDir, 'src/App.js'), 'utf-8')
               console.log('HMR open: changing file now')
               fs.writeFileSync(path.join(tmpDir, 'src/App.js'), content.replace('Welcome to', 'Change'))
             }, 5000)
           }
 
           // Fail on EventSource errors
-          hmrClient.onerror = err => {
+          hmrClient.onerror = (err) => {
             done(new Error(`HMR client error: ${err}`))
           }
 
-          hmrClient.onmessage = e => {
+          hmrClient.onmessage = (e) => {
             // Ignore hearbeat
             if (e.data === '\uD83D\uDC93') {
               console.log(e.data)
               return
             }
 
-            let data = JSON.parse(e.data)
+            const data = JSON.parse(e.data)
             console.log(`HMR message: ${data.action}; state=${state}`)
             if (data.action === 'building') {
               if (state === States.CHANGED_FILE) {
@@ -149,12 +149,12 @@ describe('sample projects', function() {
       })
     })
 
-    after(done => {
+    after((done) => {
       if (hmrClient) {
         hmrClient.close()
       }
       if (server) {
-        kill(server.pid, 'SIGKILL', err => {
+        kill(server.pid, 'SIGKILL', (err) => {
           if (err) return done(err)
           rimraf(tmpDir, done)
         })
@@ -177,16 +177,16 @@ describe('sample projects', function() {
     let originalNodeEnv
     let tmpDir
 
-    before(done => {
+    before((done) => {
       originalCwd = process.cwd()
       originalNodeEnv = process.env.NODE_ENV
       delete process.env.NODE_ENV
       tmpDir = temp.mkdirSync('cherry-pick')
-      copyTemplateDir(path.join(__dirname, '../fixtures/projects/cherry-pick'), tmpDir, {}, err => {
+      copyTemplateDir(path.join(__dirname, '../fixtures/projects/cherry-pick'), tmpDir, {}, (err) => {
         if (err) return done(err)
         process.chdir(tmpDir)
-        execSync('npm install', {stdio: 'inherit'})
-        cli(['build'], err => {
+        execSync('npm install', { stdio: 'inherit' })
+        cli(['build'], (err) => {
           expect(err).toNotExist()
           es5 = fs.readFileSync(path.join(tmpDir, 'lib/index.js'), 'utf-8')
           es6 = fs.readFileSync(path.join(tmpDir, 'es/index.js'), 'utf-8')
@@ -195,10 +195,10 @@ describe('sample projects', function() {
       })
     })
 
-    after(done => {
+    after((done) => {
       process.chdir(originalCwd)
       process.env.NODE_ENV = originalNodeEnv
-      rimraf(tmpDir, err => {
+      rimraf(tmpDir, (err) => {
         done(err)
       })
     })
@@ -216,7 +216,7 @@ describe('sample projects', function() {
       expect(es5).toInclude("module.exports = exports['default']")
     })
     it('ES5 build ignores co-located test files and directories', () => {
-      expect(glob.sync('*', {cwd: path.resolve('lib')})).toEqual([
+      expect(glob.sync('*', { cwd: path.resolve('lib') })).toEqual([
         'index.js',
       ])
     })
@@ -230,7 +230,7 @@ describe('sample projects', function() {
       expect(es6).toInclude('CherryPicker.propTypes = process.env.NODE_ENV !== "production" ? {')
     })
     it('ES6 module build ignores co-located test files and directories', () => {
-      expect(glob.sync('*', {cwd: path.resolve('es')})).toEqual([
+      expect(glob.sync('*', { cwd: path.resolve('es') })).toEqual([
         'index.js',
       ])
     })
@@ -243,32 +243,32 @@ describe('sample projects', function() {
     let originalNodeEnv
     let tmpDir
 
-    before(done => {
+    before((done) => {
       originalCwd = process.cwd()
       originalNodeEnv = process.env.NODE_ENV
       delete process.env.NODE_ENV
       tmpDir = temp.mkdirSync('router-app')
-      copyTemplateDir(path.join(__dirname, '../fixtures/projects/router-app'), tmpDir, {}, err => {
+      copyTemplateDir(path.join(__dirname, '../fixtures/projects/router-app'), tmpDir, {}, (err) => {
         if (err) return done(err)
         process.chdir(tmpDir)
-        execSync('npm install', {stdio: 'inherit'})
-        cli(['build'], err => {
+        execSync('npm install', { stdio: 'inherit' })
+        cli(['build'], (err) => {
           expect(err).toNotExist()
           done()
         })
       })
     })
 
-    after(done => {
+    after((done) => {
       process.chdir(originalCwd)
       process.env.NODE_ENV = originalNodeEnv
-      rimraf(tmpDir, err => {
+      rimraf(tmpDir, (err) => {
         done(err)
       })
     })
 
     it('creates split bundles, vendor bundles, copies public subdirs and includes font resources', () => {
-      let files = stripHashes((glob.sync('**/*', {cwd: path.resolve('dist')}))).sort()
+      const files = stripHashes((glob.sync('**/*', { cwd: path.resolve('dist') }))).sort()
       expect(files).toEqual([
         '0.js',
         '0.js.map',
@@ -302,30 +302,30 @@ describe('sample projects', function() {
     let originalNodeEnv
     let tmpDir
 
-    before(done => {
+    before((done) => {
       originalCwd = process.cwd()
       originalNodeEnv = process.env.NODE_ENV
       delete process.env.NODE_ENV
       tmpDir = temp.mkdirSync('react-component-with-css')
-      copyTemplateDir(path.join(__dirname, '../fixtures/projects/react-component-with-css'), tmpDir, {}, err => {
+      copyTemplateDir(path.join(__dirname, '../fixtures/projects/react-component-with-css'), tmpDir, {}, (err) => {
         if (err) return done(err)
         process.chdir(tmpDir)
-        execSync('npm install', {stdio: 'inherit'})
-        cli(['build', '--copy-files'], err => {
+        execSync('npm install', { stdio: 'inherit' })
+        cli(['build', '--copy-files'], (err) => {
           expect(err).toNotExist()
           done()
         })
       })
     })
 
-    after(done => {
+    after((done) => {
       process.chdir(originalCwd)
       process.env.NODE_ENV = originalNodeEnv
       rimraf(tmpDir, done)
     })
 
     it('copies non-JS files', () => {
-      let files = glob.sync('**/*', {cwd: path.resolve('lib')})
+      const files = glob.sync('**/*', { cwd: path.resolve('lib') })
       expect(files).toEqual([
         'components',
         'components/Thing.css',
@@ -340,7 +340,7 @@ describe('sample projects', function() {
     let originalNodeEnv
     let tmpDir
 
-    before(done => {
+    before((done) => {
       originalCwd = process.cwd()
       originalNodeEnv = process.env.NODE_ENV
       delete process.env.NODE_ENV
@@ -352,16 +352,16 @@ describe('sample projects', function() {
       })
     })
 
-    after(done => {
+    after((done) => {
       process.chdir(originalCwd)
       process.env.NODE_ENV = originalNodeEnv
-      rimraf(tmpDir, err => {
+      rimraf(tmpDir, (err) => {
         done(err)
       })
     })
 
-    it('calls back with an error', done => {
-      cli(['build'], err => {
+    it('calls back with an error', (done) => {
+      cli(['build'], (err) => {
         expect(err).toExist()
         done()
       })

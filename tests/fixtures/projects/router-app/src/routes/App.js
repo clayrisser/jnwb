@@ -1,8 +1,8 @@
 import './App.css'
 
 import t from 'prop-types'
-import React, {Component} from 'react'
-import {Link} from 'react-router'
+import React, { Component } from 'react'
+import { Link } from 'react-router'
 
 import Thing from 'src/components/Thing'
 
@@ -12,17 +12,17 @@ class App extends Component {
   }
 
   render() {
-    return <div>
+    return (<div>
       <h1>Welcome to React</h1>
-      <Thing/>
-      <hr/>
+      <Thing />
+      <hr />
       <ul>
         <li><Link activeClassName="active" to="/child1">Child 1</Link></li>
         <li><Link activeClassName="active" to="/child2/test.com">Child 2</Link></li>
       </ul>
-      <hr/>
+      <hr />
       {this.props.children}
-    </div>
+    </div>)
   }
 }
 

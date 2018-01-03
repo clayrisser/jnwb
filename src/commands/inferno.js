@@ -1,9 +1,9 @@
 // @flow
-import {cyan as opt, green as cmd, red, yellow as req} from 'chalk'
+import { cyan as opt, green as cmd, red, yellow as req } from 'chalk'
 import parseArgs from 'minimist'
 
-import {CONFIG_FILE_NAME} from '../constants'
-import {ConfigValidationError, UserError} from '../errors'
+import { CONFIG_FILE_NAME } from '../constants'
+import { ConfigValidationError, UserError } from '../errors'
 
 const COMMAND_MODULES = {
   build: 'build-inferno',
@@ -26,14 +26,14 @@ function handleError(error) {
   process.exit(1)
 }
 
-let args = parseArgs(process.argv.slice(3), {
+const args = parseArgs(process.argv.slice(3), {
   alias: {
     c: 'config',
     p: 'plugins',
   }
 })
 
-let command = args._[0]
+const command = args._[0]
 
 if (!command || /^h(elp)?$/.test(command)) {
   console.log(`Usage: ${cmd('nwb inferno')} ${req('(run|build)')} ${opt('[options]')}
@@ -82,10 +82,10 @@ if (!COMMAND_MODULES.hasOwnProperty(command)) {
   process.exit(1)
 }
 
-let commandModule = require(`./${COMMAND_MODULES[command]}`)
+const commandModule = require(`./${COMMAND_MODULES[command]}`)
 
 try {
-  commandModule(args, err => {
+  commandModule(args, (err) => {
     if (err) handleError(err)
   })
 }

@@ -5,12 +5,12 @@ import runSeries from 'run-series'
 import merge from 'webpack-merge'
 
 import cleanApp from './commands/clean-app'
-import {UserError} from './errors'
-import {install} from './utils'
+import { UserError } from './errors'
+import { install } from './utils'
 import webpackBuild from './webpackBuild'
 import webpackServer from './webpackServer'
 
-import type {ErrBack} from './types'
+import type { ErrBack } from './types'
 
 type QuickConfigOptions = {
   // Extra command config to be merged in
@@ -41,12 +41,12 @@ export function build(args: Object, appConfig: QuickAppConfig, cb: ErrBack) {
     return cb(new UserError('An entry module must be specified.'))
   }
 
-  let dist = args._[2] || 'dist'
+  const dist = args._[2] || 'dist'
 
   runSeries([
-    (cb) => install(appConfig.getQuickDependencies(), {args, check: true}, cb),
-    (cb) => cleanApp({_: ['clean-app', dist]}, cb),
-    (cb) => webpackBuild(
+    cb => install(appConfig.getQuickDependencies(), { args, check: true }, cb),
+    cb => cleanApp({ _: ['clean-app', dist] }, cb),
+    cb => webpackBuild(
       `${appConfig.getName()} app`,
       args,
       () => createBuildConfig(args, appConfig.getQuickBuildConfig()),
@@ -60,21 +60,21 @@ export function build(args: Object, appConfig: QuickAppConfig, cb: ErrBack) {
  * config provided into it.
  */
 export function createBuildConfig(args: Object, options: QuickConfigOptions) {
-  let {
+  const {
     commandConfig: extraConfig = {},
     defaultTitle,
     renderShim,
     renderShimAliases,
   } = options
 
-  let entry = path.resolve(args._[1])
-  let dist = path.resolve(args._[2] || 'dist')
-  let mountId = args['mount-id'] || 'app'
+  const entry = path.resolve(args._[1])
+  const dist = path.resolve(args._[2] || 'dist')
+  const mountId = args['mount-id'] || 'app'
 
-  let production = process.env.NODE_ENV === 'production'
-  let filenamePattern = production ? '[name].[chunkhash:8].js' : '[name].js'
+  const production = process.env.NODE_ENV === 'production'
+  const filenamePattern = production ? '[name].[chunkhash:8].js' : '[name].js'
 
-  let config: Object = {
+  const config: Object = {
     babel: {
       stage: 0,
     },
@@ -96,12 +96,12 @@ export function createBuildConfig(args: Object, options: QuickConfigOptions) {
   }
 
   if (renderShim == null || args.force === true) {
-    config.entry = {app: [entry]}
+    config.entry = { app: [entry] }
   }
   else {
     // Use a render shim module which supports quick prototyping
-    config.entry = {app: [renderShim]}
-    config.plugins.define = {NWB_QUICK_MOUNT_ID: JSON.stringify(mountId)}
+    config.entry = { app: [renderShim] }
+    config.plugins.define = { NWB_QUICK_MOUNT_ID: JSON.stringify(mountId) }
     config.resolve = {
       alias: {
         // Allow the render shim module to import the provided entry module
@@ -124,18 +124,18 @@ export function createBuildConfig(args: Object, options: QuickConfigOptions) {
  * provided into it.
  */
 export function createServeConfig(args: Object, options: QuickConfigOptions) {
-  let {
+  const {
     commandConfig: extraConfig = {},
     defaultTitle,
     renderShim,
     renderShimAliases,
   } = options
 
-  let entry = path.resolve(args._[1])
-  let dist = path.resolve(args._[2] || 'dist')
-  let mountId = args['mount-id'] || 'app'
+  const entry = path.resolve(args._[1])
+  const dist = path.resolve(args._[2] || 'dist')
+  const mountId = args['mount-id'] || 'app'
 
-  let config: Object = {
+  const config: Object = {
     babel: {
       stage: 0
     },
@@ -157,7 +157,7 @@ export function createServeConfig(args: Object, options: QuickConfigOptions) {
   }
   else {
     config.entry = [renderShim]
-    config.plugins.define = {NWB_QUICK_MOUNT_ID: JSON.stringify(mountId)}
+    config.plugins.define = { NWB_QUICK_MOUNT_ID: JSON.stringify(mountId) }
     config.resolve = {
       alias: {
         // Allow the render shim module to import the provided entry module
@@ -185,7 +185,7 @@ export function serve(args: Object, appConfig: QuickAppConfig, cb: ErrBack) {
   }
 
   runSeries([
-    (cb) => install(appConfig.getQuickDependencies(), {args, check: true}, cb),
-    (cb) => webpackServer(args, createServeConfig(args, appConfig.getQuickServeConfig()), cb),
+    cb => install(appConfig.getQuickDependencies(), { args, check: true }, cb),
+    cb => webpackServer(args, createServeConfig(args, appConfig.getQuickServeConfig()), cb),
   ], cb)
 }

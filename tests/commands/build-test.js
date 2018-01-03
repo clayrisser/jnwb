@@ -8,7 +8,7 @@ import temp from 'temp'
 
 import cli from '../../src/cli'
 
-let stripHashes = (files) => files.map(file => file.replace(/\.\w{8}\./, '.'))
+const stripHashes = files => files.map(file => file.replace(/\.\w{8}\./, '.'))
 
 describe('command: build', function() {
   this.timeout(90000)
@@ -34,7 +34,7 @@ describe('command: build', function() {
   describe('building a React app', () => {
     let builtHTML
 
-    before(done => {
+    before((done) => {
       setUp()
       cli(['new', 'react-app', 'test-app'], (err) => {
         expect(err).toNotExist('No errors creating a new React app')
@@ -49,7 +49,7 @@ describe('command: build', function() {
     after(tearDown)
 
     it('creates a build with sourcemaps', () => {
-      let files = stripHashes((glob.sync('*', {cwd: path.resolve('dist')}))).sort()
+      const files = stripHashes((glob.sync('*', { cwd: path.resolve('dist') }))).sort()
       expect(files).toEqual([
         'app.css',
         'app.css.map',
@@ -70,8 +70,8 @@ describe('command: build', function() {
       expect(builtHTML).toNotInclude('src="/manifest"')
     })
     it('injects scripts in the correct order', () => {
-      let appIndex = builtHTML.indexOf('src="/app')
-      let vendorIndex = builtHTML.indexOf('src="/vendor')
+      const appIndex = builtHTML.indexOf('src="/app')
+      const vendorIndex = builtHTML.indexOf('src="/vendor')
       expect(appIndex).toNotBe(-1)
       expect(vendorIndex).toNotBe(-1)
       expect(vendorIndex).toBeLessThan(appIndex)
@@ -93,17 +93,17 @@ describe('command: build', function() {
     after(tearDown)
 
     it('creates an ES5 build', () => {
-      expect(glob.sync('*', {cwd: path.resolve('lib')})).toEqual([
+      expect(glob.sync('*', { cwd: path.resolve('lib') })).toEqual([
         'index.js',
       ])
     })
     it('creates an ES6 modules build', () => {
-      expect(glob.sync('*', {cwd: path.resolve('es')})).toEqual([
+      expect(glob.sync('*', { cwd: path.resolve('es') })).toEqual([
         'index.js',
       ])
     })
     it('creates a UMD build with a sourcemap', () => {
-      expect(glob.sync('*', {cwd: path.resolve('umd')})).toEqual([
+      expect(glob.sync('*', { cwd: path.resolve('umd') })).toEqual([
         'test-component.js',
         'test-component.min.js',
         'test-component.min.js.map',
@@ -114,7 +114,7 @@ describe('command: build', function() {
         .toInclude('root["TestComponent"]')
     })
     it('builds the demo app with a sourcemap', () => {
-      expect(glob.sync('*', {cwd: path.resolve('demo/dist')})).toMatch([
+      expect(glob.sync('*', { cwd: path.resolve('demo/dist') })).toMatch([
         /^demo\.\w{8}\.js/,
         /^demo\.\w{8}\.js\.map/,
         'index.html',

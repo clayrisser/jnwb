@@ -1,8 +1,8 @@
 // @flow
 import path from 'path'
 
-import {UserError} from './errors'
-import {typeOf} from './utils'
+import { UserError } from './errors'
+import { typeOf } from './utils'
 
 type BabelPluginConfig = string | [string, Object];
 
@@ -44,7 +44,7 @@ export default function createBabelConfig(
   userConfig: UserOptions = {},
   userConfigPath: string = ''
 ): BabelConfig {
-  let {
+  const {
     commonJSInterop,
     modules = false,
     plugins: buildPlugins = [],
@@ -77,12 +77,12 @@ export default function createBabelConfig(
   }
 
   presets.push(
-    [require.resolve('babel-preset-env'), {loose, modules, ...env}]
+    [require.resolve('babel-preset-env'), { loose, modules, ...env }]
   )
 
   // Additional build presets
   if (Array.isArray(buildPresets)) {
-    buildPresets.forEach(preset => {
+    buildPresets.forEach((preset) => {
       // Presets which are configurable via user config are specified by name so
       // customisation can be handled in this module.
       if (preset === 'react-prod') {
@@ -106,7 +106,7 @@ export default function createBabelConfig(
   }
 
   // Stage preset
-  let stage = userStage != null ? userStage : buildStage
+  const stage = userStage != null ? userStage : buildStage
   if (typeof stage == 'number') {
     presets.push(require.resolve(`babel-preset-stage-${stage}`))
     // Decorators are stage 2 but not supported by Babel yet - add the legacy
@@ -120,7 +120,7 @@ export default function createBabelConfig(
     presets = presets.concat(userPresets)
   }
 
-  let config: BabelConfig = {presets}
+  let config: BabelConfig = { presets }
 
   plugins = plugins.concat(buildPlugins, userPlugins)
 
@@ -177,7 +177,7 @@ export default function createBabelConfig(
 
   // The lodash plugin supports generic cherry-picking for named modules
   if (cherryPick) {
-    plugins.push([require.resolve('babel-plugin-lodash'), {id: cherryPick}])
+    plugins.push([require.resolve('babel-plugin-lodash'), { id: cherryPick }])
   }
 
   if (plugins.length > 0) {

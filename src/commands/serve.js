@@ -1,7 +1,7 @@
 // @flow
-import {getProjectType} from '../config'
-import {INFERNO_APP, PREACT_APP, REACT_APP, REACT_COMPONENT, WEB_APP} from '../constants'
-import {UserError} from '../errors'
+import { getProjectType } from '../config'
+import { INFERNO_APP, PREACT_APP, REACT_APP, REACT_COMPONENT, WEB_APP, WEB_MODULE } from '../constants'
+import { UserError } from '../errors'
 import serveInfernoApp from './serve-inferno-app'
 import servePreactApp from './serve-preact-app'
 import serveReactApp from './serve-react-app'
@@ -9,7 +9,7 @@ import serveReactDemo from './serve-react-demo'
 import serveWebApp from './serve-web-app'
 import serveWebDemo from './serve-web-demo'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 const SERVE_COMMANDS = {
   [INFERNO_APP]: serveInfernoApp,

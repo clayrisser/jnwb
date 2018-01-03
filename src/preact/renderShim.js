@@ -1,9 +1,9 @@
 /* global NWB_QUICK_MOUNT_ID */
 
 // h/t to @developit for this render shim module
-let Preact = require('preact')
-let {h, render} = Preact
-let parent = document.getElementById(NWB_QUICK_MOUNT_ID)
+const Preact = require('preact')
+const { h, render } = Preact
+const parent = document.getElementById(NWB_QUICK_MOUNT_ID)
 let root = parent.firstChild // If #app already contains elements, hydrate from them (for SSR)
 let vnode = null
 

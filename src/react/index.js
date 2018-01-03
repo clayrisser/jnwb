@@ -1,7 +1,7 @@
 // @flow
 import path from 'path'
 
-import {modulePath} from '../utils'
+import { modulePath } from '../utils'
 
 function getBaseConfig(): Object {
   return {
@@ -16,19 +16,19 @@ function getBaseDependencies() {
 }
 
 function getBuildConfig(args, options: {useModulePath?: boolean} = {}) {
-  let config = getBaseConfig()
+  const config = getBaseConfig()
 
   if (process.env.NODE_ENV === 'production') {
     // User-configurable, so handled by createBabelConfig
     config.babel.presets.push('react-prod')
   }
 
-  let aliasPath = options.useModulePath ? modulePath : (alias) => alias
+  const aliasPath = options.useModulePath ? modulePath : alias => alias
 
   if (args.inferno || args['inferno-compat']) {
     config.resolve = {
       alias: {
-        'react': aliasPath('inferno-compat'),
+        react: aliasPath('inferno-compat'),
         'react-dom': aliasPath('inferno-compat'),
       },
     }
@@ -37,10 +37,10 @@ function getBuildConfig(args, options: {useModulePath?: boolean} = {}) {
     // Use the path to preact-compat.js, as using the path to the preact-compat
     // module picks up the "module" build, which prevents hijacking the render()
     // function in the render shim.
-    let preactCompathPath = path.join(aliasPath('preact-compat'), 'dist/preact-compat')
+    const preactCompathPath = path.join(aliasPath('preact-compat'), 'dist/preact-compat')
     config.resolve = {
       alias: {
-        'react': preactCompathPath,
+        react: preactCompathPath,
         'react-dom': preactCompathPath,
         'create-react-class': 'preact-compat/lib/create-react-class',
       },
@@ -82,7 +82,7 @@ class ReactConfig {
       defaultTitle: `${this.getName()} App`,
       renderShim: require.resolve('./renderShim'),
       renderShimAliases: {
-        'react': modulePath('react'),
+        react: modulePath('react'),
         'react-dom': modulePath('react-dom'),
       },
     }
@@ -108,7 +108,7 @@ class ReactConfig {
   }
 
   getServeConfig = () => {
-    let config = getBaseConfig()
+    const config = getBaseConfig()
     config.babel.presets.push(require.resolve('./react-dev-preset'))
 
     if (this._args.hmr !== false && this._args.hmre !== false) {
@@ -128,7 +128,7 @@ class ReactConfig {
 
   getQuickBuildConfig = () => {
     return {
-      commandConfig: getBuildConfig(this._args, {useModulePath: true}),
+      commandConfig: getBuildConfig(this._args, { useModulePath: true }),
       ...this._getQuickConfig(),
     }
   }

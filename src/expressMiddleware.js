@@ -3,12 +3,12 @@ import assert from 'assert'
 
 import webpack from 'webpack'
 
-import {createServeConfig} from './appCommands'
-import {getProjectType} from './config'
-import {INFERNO_APP, PREACT_APP, REACT_APP, WEB_APP} from './constants'
+import { createServeConfig } from './appCommands'
+import { getProjectType } from './config'
+import { INFERNO_APP, PREACT_APP, REACT_APP, WEB_APP } from './constants'
 import createServerWebpackConfig from './createServerWebpackConfig'
 import debug from './debug'
-import {deepToString, joinAnd} from './utils'
+import { deepToString, joinAnd } from './utils'
 
 const APP_TYPE_CONFIG = {
   [INFERNO_APP]: './inferno',
@@ -29,17 +29,17 @@ export default function nwbMiddleware(express: Object, options: Object = {}) {
 
   let projectType = options.type
   if (projectType == null) {
-    projectType = getProjectType({_: ['serve'], config: options.config})
+    projectType = getProjectType({ _: ['serve'], config: options.config })
   }
   if (!APP_TYPE_CONFIG[projectType]) {
     throw new Error(
-      `nwb Express middleware is unable to handle '${projectType}' projects, only ` +
-      joinAnd(Object.keys(APP_TYPE_CONFIG).map(s => `'${s}'`), 'or')
+      `nwb Express middleware is unable to handle '${projectType}' projects, only ${
+      joinAnd(Object.keys(APP_TYPE_CONFIG).map(s => `'${s}'`), 'or')}`
     )
   }
 
   // Use options to create an object equivalent to CLI args parsed by minimist
-  let args = {
+  const args = {
     _: [`serve-${projectType}`, options.entry],
     config: options.config,
     hmre: !(options.hmr === false || options.hmre === false),
@@ -47,9 +47,9 @@ export default function nwbMiddleware(express: Object, options: Object = {}) {
     reload: !!options.reload
   }
 
-  let appTypeConfig = require(APP_TYPE_CONFIG[projectType])(args)
+  const appTypeConfig = require(APP_TYPE_CONFIG[projectType])(args)
 
-  let webpackConfig = createServerWebpackConfig(
+  const webpackConfig = createServerWebpackConfig(
     args,
     createServeConfig(args, appTypeConfig.getServeConfig(), {
       plugins: {
@@ -63,9 +63,9 @@ export default function nwbMiddleware(express: Object, options: Object = {}) {
 
   debug('webpack config: %s', deepToString(webpackConfig))
 
-  let compiler = webpack(webpackConfig)
+  const compiler = webpack(webpackConfig)
 
-  let router = express.Router()
+  const router = express.Router()
 
   router.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,

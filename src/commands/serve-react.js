@@ -1,8 +1,8 @@
 // @flow
-import {serve} from '../quickCommands'
+import { serve } from '../quickCommands'
 import reactConfig from '../react'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Serve a standalone React app entry module, component or element.

@@ -1,20 +1,20 @@
-import {yellow} from 'chalk'
+import { yellow } from 'chalk'
 import detect from 'detect-port'
 import inquirer from 'inquirer'
 
-import {getPluginConfig, getUserConfig} from './config'
-import {DEFAULT_PORT} from './constants'
+import { getPluginConfig, getUserConfig } from './config'
+import { DEFAULT_PORT } from './constants'
 import createServerWebpackConfig from './createServerWebpackConfig'
 import debug from './debug'
 import devServer from './devServer'
-import {clearConsole, deepToString} from './utils'
+import { clearConsole, deepToString } from './utils'
 
 /**
  * Get the port to run the server on, detecting if the intended port is
  * available first and prompting the user if not.
  */
 function getServerPort(args, cb) {
-  let intendedPort = args.port || DEFAULT_PORT
+  const intendedPort = args.port || DEFAULT_PORT
 
   detect(intendedPort, (err, suggestedPort) => {
     if (err) return cb(err)
@@ -36,8 +36,8 @@ function getServerPort(args, cb) {
         default: true,
       },
     ]).then(
-      ({run}) => cb(null, run ? suggestedPort : null),
-      (err) => cb(err)
+      ({ run }) => cb(null, run ? suggestedPort : null),
+      err => cb(err)
     )
   })
 }
@@ -58,8 +58,8 @@ export default function webpackServer(args, buildConfig, cb) {
 
   let serverConfig
   try {
-    let pluginConfig = getPluginConfig(args)
-    serverConfig = getUserConfig(args, {pluginConfig}).devServer
+    const pluginConfig = getPluginConfig(args)
+    serverConfig = getUserConfig(args, { pluginConfig }).devServer
   }
   catch (e) {
     return cb(e)
@@ -79,7 +79,7 @@ export default function webpackServer(args, buildConfig, cb) {
     // Open a browser with --open (default browser) or --open="browser name"
     if (args.open) serverConfig.open = args.open
 
-    let url = `http${serverConfig.https ? 's' : ''}://${args.host || 'localhost'}:${port}/`
+    const url = `http${serverConfig.https ? 's' : ''}://${args.host || 'localhost'}:${port}/`
 
     if (!('status' in buildConfig.plugins)) {
       buildConfig.plugins.status = {

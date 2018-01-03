@@ -1,8 +1,8 @@
 // @flow
 import infernoConfig from '../inferno'
-import {serve} from '../appCommands'
+import { serve } from '../appCommands'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 /**
  * Serve an Inferno app.

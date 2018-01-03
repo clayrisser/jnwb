@@ -1,8 +1,8 @@
 import chalk from 'chalk'
 
-import {INFERNO_APP, PREACT_APP} from '../constants'
-import {COMPAT_CONFIGS} from '../createWebpackConfig'
-import {joinAnd, pluralise as s, typeOf} from '../utils'
+import { INFERNO_APP, PREACT_APP } from '../constants'
+import { COMPAT_CONFIGS } from '../createWebpackConfig'
+import { joinAnd, pluralise as s, typeOf } from '../utils'
 
 const DEFAULT_STYLE_LOADERS = new Set(['css', 'postcss'])
 
@@ -11,8 +11,8 @@ let warnedAboutEnzymeCompat = false
 let warnedAboutOldStyleRules = false
 let warnedAboutSinonCompat = false
 
-export function processWebpackConfig({pluginConfig, report, userConfig}) {
-  let {
+export function processWebpackConfig({ pluginConfig, report, userConfig }) {
+  const {
     aliases,
     autoprefixer,
     compat,
@@ -32,7 +32,7 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
     ...unexpectedConfig
   } = userConfig.webpack
 
-  let unexpectedProps = Object.keys(unexpectedConfig)
+  const unexpectedProps = Object.keys(unexpectedConfig)
   if (unexpectedProps.length > 0) {
     report.error(
       'webpack',
@@ -66,7 +66,7 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
   if ('autoprefixer' in userConfig.webpack) {
     // Convenience: allow Autoprefixer browsers config to be configured as a String
     if (typeOf(autoprefixer) === 'string') {
-      userConfig.webpack.autoprefixer = {browsers: autoprefixer}
+      userConfig.webpack.autoprefixer = { browsers: autoprefixer }
     }
     else if (typeOf(autoprefixer) !== 'object') {
       report.error(
@@ -89,8 +89,8 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
     }
     else {
       // Validate compat props
-      let compatProps = Object.keys(compat)
-      let unexpectedCompatProps = compatProps.filter(prop => !(prop in COMPAT_CONFIGS))
+      const compatProps = Object.keys(compat)
+      const unexpectedCompatProps = compatProps.filter(prop => !(prop in COMPAT_CONFIGS))
       if (unexpectedCompatProps.length > 0) {
         report.error(
           'webpack.compat',
@@ -121,14 +121,14 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
         }
       }
 
-      void ['intl', 'moment', 'react-intl'].forEach(compatProp => {
-        let config = compat[compatProp]
-        let configType = typeOf(config)
+      void ['intl', 'moment', 'react-intl'].forEach((compatProp) => {
+        const config = compat[compatProp]
+        const configType = typeOf(config)
         if (configType === 'string') {
-          compat[compatProp] = {locales: [config]}
+          compat[compatProp] = { locales: [config] }
         }
         else if (configType === 'array') {
-          compat[compatProp] = {locales: config}
+          compat[compatProp] = { locales: config }
         }
         else if (configType === 'object') {
           if (typeOf(config.locales) === 'string') {
@@ -158,7 +158,7 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
   // copy
   if ('copy' in userConfig.webpack) {
     if (typeOf(copy) === 'array') {
-      userConfig.webpack.copy = {patterns: copy}
+      userConfig.webpack.copy = { patterns: copy }
     }
     else if (typeOf(copy) === 'object') {
       if (!copy.patterns && !copy.options) {
@@ -278,8 +278,8 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
     }
     else {
       let error = false
-      Object.keys(rules).forEach(ruleId => {
-        let rule = rules[ruleId]
+      Object.keys(rules).forEach((ruleId) => {
+        const rule = rules[ruleId]
         if (rule.use && typeOf(rule.use) !== 'array') {
           report.error(
             `webpack.rules.${ruleId}.use`,
@@ -297,8 +297,8 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
 
   // styles
   if ('styles' in userConfig.webpack) {
-    let configType = typeOf(styles)
-    let help = `Must be ${chalk.cyan("'old'")} (to use default style rules from nwb <= v0.15), ` +
+    const configType = typeOf(styles)
+    const help = `Must be ${chalk.cyan("'old'")} (to use default style rules from nwb <= v0.15), ` +
                `${chalk.cyan('false')} (to disable default style rules) or ` +
                `an ${chalk.cyan('Object')} (to configure custom style rules)`
     if (configType === 'string' && styles !== 'old') {
@@ -320,7 +320,7 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
         styleTypeIds = styleTypeIds.concat(Object.keys(pluginConfig.cssPreprocessors))
       }
       let error = false
-      Object.keys(styles).forEach(styleType => {
+      Object.keys(styles).forEach((styleType) => {
         if (styleTypeIds.indexOf(styleType) === -1) {
           report.error(
             'webpack.styles',
@@ -340,18 +340,18 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
         }
         else {
           styles[styleType].forEach((styleConfig, index) => {
-            let {
+            const {
               test, include, exclude, // eslint-disable-line no-unused-vars
               ...loaderConfig
             } = styleConfig
-            Object.keys(loaderConfig).forEach(loaderId => {
+            Object.keys(loaderConfig).forEach((loaderId) => {
               if (!DEFAULT_STYLE_LOADERS.has(loaderId) && loaderId !== styleType) {
                 // XXX Assumption: preprocessors provide a single loader which
                 //     is configured with the same id as the style type id.
                 // XXX Using Array.from() manually as babel-preset-env with a
                 //     Node 4 target is tranpiling Array spreads to concat()
                 //     calls without ensuring Sets are converted to Arrays.
-                let loaderIds = Array.from(new Set([
+                const loaderIds = Array.from(new Set([
                   ...Array.from(DEFAULT_STYLE_LOADERS),
                   styleType
                 ])).map(id => chalk.cyan(id))
@@ -430,7 +430,7 @@ export function processWebpackConfig({pluginConfig, report, userConfig}) {
 function checkForRedundantCompatAliases(projectType, aliases, configPath, report) {
   if (!new Set([INFERNO_APP, PREACT_APP]).has(projectType)) return
 
-  let compatModule = `${projectType.split('-')[0]}-compat`
+  const compatModule = `${projectType.split('-')[0]}-compat`
   if (aliases.react && aliases.react.includes(compatModule)) {
     report.hint(`${configPath}.react`,
       `nwb aliases ${chalk.yellow('react')} to ${chalk.cyan(compatModule)} by default, so you can remove this config`
@@ -448,11 +448,11 @@ function checkForRedundantCompatAliases(projectType, aliases, configPath, report
  * config.
  */
 export function prepareWebpackRuleConfig(rules) {
-  Object.keys(rules).forEach(ruleId => {
-    let rule = rules[ruleId]
+  Object.keys(rules).forEach((ruleId) => {
+    const rule = rules[ruleId]
     // XXX Special case for stylus-loader, which uses a 'use' option for plugins
     if ((rule.use && !/stylus$/.test(ruleId)) || rule.options) return
-    let {
+    const {
       exclude, include, test, loader, // eslint-disable-line no-unused-vars
       ...options
     } = rule
@@ -468,16 +468,16 @@ export function prepareWebpackRuleConfig(rules) {
  * config.
  */
 export function prepareWebpackStyleConfig(styles) {
-  Object.keys(styles).forEach(type => {
-    styles[type].forEach(styleConfig => {
-      let {
+  Object.keys(styles).forEach((type) => {
+    styles[type].forEach((styleConfig) => {
+      const {
         exclude, include, // eslint-disable-line no-unused-vars
         ...loaderConfig
       } = styleConfig
       if (Object.keys(loaderConfig).length > 0) {
         styleConfig.loaders = {}
-        Object.keys(loaderConfig).forEach(loader => {
-          styleConfig.loaders[loader] = {options: styleConfig[loader]}
+        Object.keys(loaderConfig).forEach((loader) => {
+          styleConfig.loaders[loader] = { options: styleConfig[loader] }
           delete styleConfig[loader]
         })
       }

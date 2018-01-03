@@ -1,9 +1,9 @@
 import React from 'react'
-import {Route} from 'react-router'
+import { Route } from 'react-router'
 
 import App from './App'
 
-let routes = <Route path="/" component={App}>
+const routes = (<Route path="/" component={App}>
   <Route
     path="child1"
     getComponent={
@@ -24,6 +24,6 @@ let routes = <Route path="/" component={App}>
       }
     }
   />
-</Route>
+</Route>)
 
 export default routes

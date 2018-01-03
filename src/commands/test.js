@@ -1,6 +1,6 @@
 // @flow
-import {getProjectType} from '../config'
-import {INFERNO_APP, PREACT_APP, REACT_APP, REACT_COMPONENT, WEB_MODULE} from '../constants'
+import { getProjectType } from '../config'
+import { INFERNO_APP, PREACT_APP, REACT_APP, REACT_COMPONENT, WEB_MODULE } from '../constants'
 import karmaServer from '../karmaServer'
 import testInferno from './test-inferno'
 import testPreact from './test-preact'
@@ -8,7 +8,7 @@ import testReact from './test-react'
 import testReactComponent from './test-react-component'
 import testWebModule from './test-web-module'
 
-import type {ErrBack} from '../types'
+import type { ErrBack } from '../types'
 
 const TEST_COMMANDS = {
   [INFERNO_APP]: testInferno,
