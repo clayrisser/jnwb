@@ -1,6 +1,6 @@
 {
   "name": "jnwb",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "A toolkit for JavaScript apps and libraries based on nwb",
   "keywords": [
     "angular",
@@ -34,7 +34,7 @@
     "polyfills.js"
   ],
   "bin": {
-    "nwb": "./lib/bin/nwb.js"
+    "jnwb": "./lib/bin/nwb.js"
   },
   "repository": {
     "type": "git",
