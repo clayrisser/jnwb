@@ -162,7 +162,7 @@ export function install(
     return process.nextTick(cb)
   }
 
-  let npmArgs = ['install', '--silent', '--no-progress']
+  let npmArgs = ['install', '--silent', '--no-progress', '--no-package-lock']
 
   if (save) {
     npmArgs.push(`--save${dev ? '-dev' : ''}`)
@@ -197,6 +197,10 @@ export function joinAnd(array: any[], lastClause: string = 'and') {
  */
 export function modulePath(module: string, basedir: string = process.cwd()): string {
   return path.dirname(resolve.sync(`${module}/package.json`, {basedir}))
+}
+
+export function pluralise(count: number, suffixes : string = ',s'): string {
+  return suffixes.split(',')[count === 1 ? 0 : 1]
 }
 
 /**

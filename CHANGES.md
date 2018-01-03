@@ -1,33 +1,166 @@
+# Unreleased (in `master`)
+
+## Breaking Changes
+
+- Validation of the configuration object provided by `nwb.config.js` files has been expanded, so previously valid config files may now be invalid [[#136](https://github.com/insin/nwb/issues/136)]
+  - Unexpected properties in top-level configuration or in `babel`, `karma`, `npm` and `webpack` configuration (i.e. anything that's not documented in the [Configuration docs](https://github.com/insin/nwb/blob/master/docs/Configuration.md)) are now treated as errors [[#193](https://github.com/insin/nwb/issues/193)]
+  - Basic type checking is now performed for all documented configuration properties.
+  - After upgrading, run `nwb check-config` to check your configuration file.
+- Updated to [UglifyJSPlugin 1.x](https://github.com/webpack-contrib/uglifyjs-webpack-plugin#readme), which supports ES2015 syntax and adds options to enable filesystem caching and use multiple processes to improve build speed, which nwb enables by default [[#412](https://github.com/insin/nwb/issues/412)]
+  - Review any custom [`webpack.uglify` config](https://github.com/insin/nwb/blob/master/docs/Configuration.md#uglify-object--false) you have against the new version's [options documentation](https://github.com/webpack-contrib/uglifyjs-webpack-plugin#options) - options for UglifyJS itself must now be passed as an `uglifyOptions` object and some of UglifyJS' default options have changed.
+- Node.js 4.8.0 is now the minimum required version, based on the `engines` config of nwb's dependencies.
+
+## `nwb.config.js` Config Changes
+
+- Deprecated the `webpack.compat.sinon` flag for Sinon 1.x compatibility settings, as subsequent major versions since July 2017 support Webpack out of the box.
+
+## Fixed
+
+- Fixed testing React component/library and web module projects when using [export extensions](http://babeljs.io/docs/plugins/transform-export-extensions/) - the Babel stage preset wasn't being defaulted to preset-stage-1, which includes the export extensions plugin [[#364](https://github.com/insin/nwb/issues/364)]
+
+## Added
+
+- Added an [`--open` flag](https://github.com/insin/nwb/blob/master/docs/Commands.md#options) to open the app in your default browser or in a named browser (e.g. `--open="Google Chrome"`) after starting a Webpack dev server [[#334](https://github.com/insin/nwb/issues/334)]
+- You can now provide a [`babel.config()` function](https://github.com/insin/nwb/blob/master/docs/Configuration.md#config-function) which will be given the generated Babel config to do whatever it wants with.
+- You can now provide a [`karma.config()` function](https://github.com/insin/nwb/blob/master/docs/Configuration.md#config-function-2) which will be given the generated Karma config to do whatever it wants with [[#408](https://github.com/insin/nwb/issues/408)]
+
+## Changed
+
+- Simplified configuration of locales in [`webpack.compat` config](https://github.com/insin/nwb/blob/master/docs/Configuration.md#compat-object)
+
+## Dependencies
+
+- autoprefixer: v7.1.6 → [v7.2.4](https://github.com/postcss/autoprefixer/blob/master/CHANGELOG.md#724)
+- babel-plugin-inferno: v3.3.0 → [v3.3.1](https://github.com/infernojs/babel-plugin-inferno/releases)
+- copy-webpack-plugin: v4.2.1 → [v4.3.1](https://github.com/webpack-contrib/copy-webpack-plugin/blob/master/CHANGELOG.md#431-2017-12-22)
+- file-loader: v1.1.5 → [v1.1.6](https://github.com/webpack-contrib/file-loader/blob/master/CHANGELOG.md#116-2017-12-16)
+- gzip-size: v4.0.0 → [v4.1.0](https://github.com/sindresorhus/gzip-size/compare/v4.0.0...v4.1.0)
+- karma: v1.7.1 → [v2.0.0](https://github.com/karma-runner/karma/releases/tag/v2.0.0)
+- karma-webpack: v2.0.6 → [v2.0.9](https://github.com/webpack-contrib/karma-webpack/blob/master/CHANGELOG.md#209-2017-12-14)
+- mocha: v4.0.1 → [v4.1.0](https://github.com/mochajs/mocha/blob/master/CHANGELOG.md#410--2017-12-28)
+- postcss-loader: v2.0.8 → [v2.0.9](https://github.com/postcss/postcss-loader/blob/master/CHANGELOG.md#209-2017-11-24)
+- style-loader: v0.19.0→ [v0.19.1](https://github.com/webpack-contrib/style-loader/blob/master/CHANGELOG.md#0191-2017-12-14)
+- webpack: v3.8.1 → [v3.10.0](https://github.com/webpack/webpack/releases)
+- webpack-dev-server: v2.9.4 → [v2.9.7](https://github.com/webpack/webpack-dev-server/releases)
+- webpack-dev-middleware: v1.12.0 → [v1.12.2](https://github.com/webpack/webpack-dev-middleware/releases)
+- webpack-hot-middleware: v2.20.0 → [v2.21.0](https://github.com/glenjamin/webpack-hot-middleware/compare/v2.20.0...v2.21.0)
+
+## Docs
+
+- Added missing docs for [`webpack.copy` config](https://github.com/insin/nwb/blob/master/docs/Configuration.md#copy-array--object)
+- Added more headings to the [Commands docs](https://github.com/insin/nwb/blob/master/docs/Commands.md#commands) to make them easier to browse, and to make feature flags such as `--copy-files` for component builds more visible [[#407](https://github.com/insin/nwb/issues/407)]
+
+# 0.20.0 / 2017-11-18
+
+## Breaking Changes
+
+- Updated UMD build config to [export the `default` export of the entry point](https://webpack.js.org/configuration/output/#output-libraryexport), rather than an ES modules interop object which looks something like `{__esModule: true, default: Getter}`, which was unintended behaviour. This will break any existing usage of UMD builds which depended on manually accessing the unintended `default` property [[#402](https://github.com/insin/nwb/issues/402)]
+- Updated to Mocha 4, which comes with [a number of breaking changes](https://github.com/mochajs/mocha/blob/master/CHANGELOG.md#boom-breaking-changes). These are mostly related to dropping support for older versions of Node.js and non-ES5-compliant browsers.
+
+## Fixed
+
+- Bump the default React peerDependency version for react-component projects to `16.x` - fixes creating components with npm 2.
+
+## Dependencies
+
+- copy-webpack-plugin: v4.2.0 → [v4.2.1](https://github.com/webpack-contrib/copy-webpack-plugin/blob/master/CHANGELOG.md#421-2017-11-17)
+- detect-port: v1.2.1 → [v1.2.2](https://github.com/node-modules/detect-port/releases)
+- karma-webpack: v2.0.5 → [v2.0.6](https://github.com/webpack-contrib/karma-webpack/blob/master/CHANGELOG.md#206-2017-11-10)
+- mocha: v3.4.2 → [v4.0.1](https://github.com/mochajs/mocha/blob/master/CHANGELOG.md#401--2017-10-05) - dropped support for old versions of Node.js and non-ES5-compliant browsers
+
+## Documentation
+
+- Documented `--unsafe-perm` workaround for PhantomJS' postinstall step failing on some OSes when installing globally with npm 5 [[#383](https://github.com/insin/nwb/issues/383)]
+
+# 0.19.2 / 2017-11-09
+
+## Fixed
+
+- Backed out use of `preact/debug` in favour of `preact/devtools`, as the debug module tries to override the preact module's render export, which fails due to Webpack enforcing the read-only nature of ES module exports.
+
+# 0.19.1 / 2017-11-04
+
+## `nwb.config.js` Config Changes
+
+- Deprecated the `webpack.compat.enzyme` flag for Enzyme v2 compatibility settings. Upgrade to Enzyme v3 when you can, which supports React all the way back to v0.13.
+  - [An example of configuring Enzyme v3](https://github.com/insin/nwb/blob/master/docs/Testing.md#configuring-testing-libraries) has been added to the [testing docs](https://github.com/insin/nwb/blob/master/docs/Testing.md#testing).
+
+## Fixed
+
+- Added `'createClass'` and `'createReactClass'` to the factory function names [React Transform](https://github.com/gaearon/babel-plugin-react-transform) looks for, so React component hot reloading will work for apps using [`create-react-class`](https://www.npmjs.com/package/create-react-class) imported as one of those names.
+
+## Changed
+
+- nwb is now also tested against Node 8 now that it's the Long Term Support version.
+- Reverted the Webpack settings change for `webpack.compat.enzyme` config in v0.19.0, as it only applied while the version numbers of published React packages were out of sync. The compatibility settings assume Enzyme v2 and React >= v15.5.
+- `style-loader`'s new `hmr` option is set to `false` when creating builds to prevent inclusion of its HMR code.
+
+## Dependencies
+
+- autoprefixer: v7.1.4 → [v7.1.6](https://github.com/postcss/autoprefixer/blob/master/CHANGELOG.md#716)
+- babel-plugin-inferno: v3.2.0 → [v3.3.0](https://github.com/infernojs/babel-plugin-inferno/releases)
+- babel-plugin-transform-react-remove-prop-types: v0.4.8 → [v0.4.10](https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types/releases)
+- babel-preset-env: v1.6.0 → [v1.6.1](https://github.com/babel/babel-preset-env/releases/tag/v1.6.1)
+- chalk: v2.1.0 → [v2.3.0](https://github.com/chalk/chalk/compare/v2.1.0...v2.3.0)
+- copy-webpack-plugin: v4.1.0 → [v4.2.0](https://github.com/webpack-contrib/copy-webpack-plugin/blob/master/CHANGELOG.md#420-2017-10-19)
+- extract-text-webpack-plugin: v3.0.0 → [v3.0.2](https://github.com/webpack-contrib/extract-text-webpack-plugin/blob/master/CHANGELOG.md#302-2017-10-25)
+- file-loader: v1.1.4 → [v1.1.5](https://github.com/webpack-contrib/file-loader/blob/master/CHANGELOG.md#115-2017-10-05)
+- filesize: v3.5.10 → [v3.5.11](https://github.com/avoidwork/filesize.js/compare/3.5.10...3.5.11)
+- karma-mocha-reporter: v2.2.4 → [v2.2.5](https://github.com/litixsoft/karma-mocha-reporter/blob/master/CHANGELOG.md#225-2017-10-17)
+- karma-webpack: v2.0.4 → [v2.0.5](https://github.com/webpack-contrib/karma-webpack/blob/master/CHANGELOG.md#205-2017-10-08)
+- phantomjs-prebuilt: v2.1.15 → v2.1.16
+- postcss-loader: v2.0.6 → [v2.0.8](https://github.com/postcss/postcss-loader/blob/master/CHANGELOG.md#208-2017-10-14)
+- resolve: v1.4.0 → [v1.5.0](https://github.com/substack/node-resolve/compare/v1.4.0...v1.5.0)
+- style-loader: v0.18.2 → [v0.19.0](https://github.com/webpack-contrib/style-loader/blob/master/CHANGELOG.md#0190-2017-10-03)
+- url-loader: v0.5.9 → [v0.6.2](https://github.com/webpack-contrib/url-loader/blob/master/CHANGELOG.md#062-2017-10-04)
+- webpack: v3.6.0 → [v3.8.1](https://github.com/webpack/webpack/releases)
+- webpack-dev-server: v2.9.1 → [v2.9.4](https://github.com/webpack/webpack-dev-server/releases)
+- webpack-hot-middleware: v2.19.1 → [v2.20.0](https://github.com/glenjamin/webpack-hot-middleware/compare/v2.19.1...v2.20.0)
+- webpack-merge: v4.1.0 → [v4.1.1](https://github.com/survivejs/webpack-merge/blob/master/CHANGELOG.md#411--2017-11-01)
+
+# 0.19.0 / 2017-10-02
+
 ## Breaking Changes
 
 - Removed hooking of React, Preact and Inferno `render()` functions in quick commands, as this won't work with ES modules builds (which are used by default in Webpack v3). This affected the current version of Preact at the time of writing.
   - If you're manually using `render()` with quick commands, you must now handle providing the target DOM node too - `document.getElementById('app')` is available in the default HTML template.
 
-## Fixed
+## Added
 
-- Reverted use of `preact/debug` in favour of `preact/devtools`, as debug doesn't seem to be ready yet [[#360](https://github.com/insin/nwb/issues/360)]
-  - If you created a Preact app with v0.18.10, replace `preact/debug` with `preact/devtools` in `src/index.js`.
+- Added [`babel.env` config](https://github.com/insin/nwb/blob/master/docs/Configuration.md#env-object) to pass additional [options for `babel-preset-env`](https://github.com/babel/babel-preset-env#options).
+- Added additional Enzyme [`webpack.compat`](https://github.com/insin/nwb/blob/master/docs/Configuration.md#compat-object) for recent versions of React 15.
 
 ## Changed
 
+- Now using `babel-preset-env` instead of deprecated `babel-preset-es201X` presets [[#375](https://github.com/insin/nwb/issues/375)]
 - Use `beautify: true` for `webpack.debug` output so code split bundles are readable.
 
 ## Dependencies
 
+- autoprefixer: v7.1.2 → [v7.1.4](https://github.com/postcss/autoprefixer/blob/master/CHANGELOG.md#714)
 - babel-cli: v6.24.1 → [v6.26.0][babel6260]
 - babel-core: v6.24.1 → [v6.26.0][babel6260]
 - babel-loader: v7.1.1 → [v7.1.2](https://github.com/babel/babel-loader/releases/tag/v7.1.2)
-- babel-polyfill: v6.23.0 → [v6.26.0][babel6260]
+- babel-plugin-istanbul: v4.1.4 → v4.1.5
+- babel-plugin-react-transform: v2.0.2 → [v3.0.0](https://github.com/gaearon/babel-plugin-react-transform/releases) - add `React.PureComponent` to the list of default super classes
 - babel-plugin-transform-react-remove-prop-types: v0.4.6 → [v0.4.8](https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types/releases)
+- babel-polyfill: v6.23.0 → [v6.26.0][babel6260]
 - babel-runtime: v6.25.0 → [v6.26.0][babel6260]
-- css-loader: v0.28.4 → [v0.28.5](https://github.com/webpack-contrib/css-loader/blob/master/CHANGELOG.md#0285-2017-08-17)
+- chalk: v2.0.1 → [v2.1.0](https://github.com/chalk/chalk/compare/v2.0.1...v2.1.0)
+- copy-webpack-plugin: v4.0.1 → [v4.1.0](https://github.com/webpack-contrib/copy-webpack-plugin/blob/master/CHANGELOG.md#410-2017-09-29)
+- css-loader: v0.28.4 → [v0.28.7](https://github.com/webpack-contrib/css-loader/blob/master/CHANGELOG.md#0287-2017-08-30)
+- file-loader: v0.11.2 → [v1.1.4](https://github.com/webpack-contrib/file-loader/blob/master/CHANGELOG.md#114-2017-09-30)
+- gzip-size: v3.0.0 → v4.0.0 - async interface now uses Promises
 - html-webpack-plugin: v2.29.0 → [v2.30.1](https://github.com/jantimon/html-webpack-plugin/blob/master/CHANGELOG.md#v2301)
-- inquirer: v3.2.1 → [v3.2.2](https://github.com/SBoudrias/Inquirer.js/releases/tag/v3.2.2)
-- mocha: v3.4.2 → [v3.5.0](https://github.com/mochajs/mocha/blob/master/CHANGELOG.md#350--2017-07-31)
-- phantomjs-prebuilt: v2.1.14 → [v2.1.15] - fix security issues with dependencies
-- webpack: v3.4.1 → [v3.5.5](https://github.com/webpack/webpack/releases)
+- inquirer: v3.2.1 → [v3.3.0](https://github.com/SBoudrias/Inquirer.js/releases)
+- karma-mocha-reporter: v2.2.3 → [v2.2.4](https://github.com/litixsoft/karma-mocha-reporter/blob/master/CHANGELOG.md#224-2017-08-24)
+- karma: v1.7.0 → [v1.7.1](https://github.com/karma-runner/karma/releases/tag/1.7.1)
+- mocha: v3.4.2 → [v3.5.3](https://github.com/mochajs/mocha/blob/master/CHANGELOG.md#353--2017-09-11)
+- phantomjs-prebuilt: v2.1.14 → v2.1.15 - fix security issues with dependencies
 - webpack-dev-middleware: v1.11.0 → [v1.12.0](https://github.com/webpack/webpack-dev-middleware/releases/tag/v1.12.0)
-- webpack-dev-server: v2.6.1 → [v2.7.1](https://github.com/webpack/webpack-dev-server/releases)
+- webpack-dev-server: v2.6.1 → [v2.9.1](https://github.com/webpack/webpack-dev-server/releases)
+- webpack-hot-middleware: v2.18.2 → [v2.19.0](https://github.com/glenjamin/webpack-hot-middleware/compare/v2.18.2...v2.19.0)
+- webpack: v3.4.1 → [v3.6.0](https://github.com/webpack/webpack/releases)
 
 [babel6260]: https://github.com/babel/babel/blob/master/CHANGELOG.md#6260-2017-08-16
 
@@ -352,7 +485,7 @@ Backported fixes from 0.18:
 - Global `react`, `preact`, and `inferno` commands are no longer installed when nwb is installed globally [[#308](https://github.com/insin/nwb/issues/308)]
 
   These are now subcommands of the global `nwb` command, to avoid conflicting with global commands installed by official tools for these libraries, e.g. [`preact-cli`](https://github.com/developit/preact-cli) is now available, which provides a global `preact` command.
-- Node.js v4.6.0 is now the minimum required version, based on the `engines` config of nwb's dependencies,
+- Node.js 4.6.0 is now the minimum required version, based on the `engines` config of nwb's dependencies,
 - A separate Webpack rule for stylesheets imported from `node_modules/` is no longer created by default.
 
   > For backwards compatibility you can set [`webpack.style` config](https://github.com/insin/nwb/blob/master/docs/Configuration.md#styles-object--false--old) to `'old'` to use the old default behaviour - this capability will be removed in a future release.
@@ -396,7 +529,7 @@ Backported fixes from 0.18:
 - babel-core: v6.22.1 → [v6.24.1][babel6241]
 - babel-loader: v6.2.10 → [v7.0.0](https://github.com/babel/babel-loader/releases/tag/v7.0.0)
 - babel-plugin-inferno: v1.7.0 → [v3.2.0](https://github.com/infernojs/babel-plugin-inferno/releases) - adds support for Inferno 1.5, not backwards-compatible with 1.4
-- babel-plugin-istanbul: v3.1.2 → [v4.1.4](https://github.com/istanbuljs/babel-plugin-istanbul/blob/master/CHANGELOG.md#414-2017-05-27) - drop support for Node.js v0.10 and v0.12
+- babel-plugin-istanbul: v3.1.2 → [v4.1.4](https://github.com/istanbuljs/babel-plugin-istanbul/blob/master/CHANGELOG.md#414-2017-05-27) - drop support for Node.js 0.10 and v0.12
 - babel-plugin-transform-react-jsx: v6.22.0 → [v6.24.1][babel6241]
 - babel-plugin-transform-react-remove-prop-types: v0.2.11 → [v0.4.5](https://github.com/oliviertassinari/babel-plugin-transform-react-remove-prop-types/releases) - dropped support for `React.createClass()` in favour of the new `create-react-class` package
 - babel-plugin-transform-runtime: v6.22.0 → [v6.23.0][babel6230]
@@ -456,7 +589,7 @@ Backported fixes from 0.18:
 
 **Changed:**
 
-- Disable creation of a minified UMD build when [`webpack.uglify` config](https://github.com/insin/nwb/blob/next/docs/Configuration.md#uglify-object--false) is `false` [[#288](https://github.com/insin/nwb/issues/288)] [[treshugart][treshugart]]
+- Disable creation of a minified UMD build when [`webpack.uglify` config](https://github.com/insin/nwb/blob/master/docs/Configuration.md#uglify-object--false) is `false` [[#288](https://github.com/insin/nwb/issues/288)] [[treshugart][treshugart]]
 - Support use of Karma `customLaunchers` which start with "Chrome" [[#296](https://github.com/insin/nwb/pull/296)] [[michaelsbradleyjr][michaelsbradleyjr]]
 
 **Fixed:**
@@ -636,7 +769,7 @@ Backported fixes from 0.18:
 - detect-port: v1.0.7 → [v1.1.0](https://github.com/node-modules/detect-port/compare/1.0.7...1.1.0)
 - filesize: v3.3.0 → [v3.4.3](https://github.com/avoidwork/filesize.js/compare/3.3.0...3.4.3)
 - html-webpack-plugin: v2.24.1 → [v2.26.0](https://github.com/ampedandwired/html-webpack-plugin/blob/master/CHANGELOG.md#v2260) - Webpack 2 RC support
-- inquirer: v2.0.0 → [v3.0.1](https://github.com/SBoudrias/Inquirer.js/releases/) - drop Node.js v0.12 support
+- inquirer: v2.0.0 → [v3.0.1](https://github.com/SBoudrias/Inquirer.js/releases/) - drop Node.js 0.12 support
 - karma: v1.3.0 → [v1.4.0](https://github.com/karma-runner/karma/blob/master/CHANGELOG.md#140-2017-01-14)
 - karma-mocha-reporter: v2.2.1 → [v2.2.2](https://github.com/litixsoft/karma-mocha-reporter/blob/master/CHANGELOG.md#222-2017-01-19)
 - karma-webpack: v1.8.0 → v2.0.1 - Webpack 2 RC support
@@ -659,8 +792,8 @@ These are being scoped to both make use of unreleased features and to test them 
 **Internal:**
 
 - Dropped unused `fs-extra` dependency.
-- Use [`babel-preset-env`](https://github.com/babel/babel-preset-env/) when transpiling to `lib/`, targeting Node.js v4 [[#233](https://github.com/insin/nwb/issues/233)]
-- Use ES2015 `String` methods available in Node.js v4 instead of `String.prototype.indexOf` comparisons [[#222](https://github.com/insin/nwb/issues/222)]
+- Use [`babel-preset-env`](https://github.com/babel/babel-preset-env/) when transpiling to `lib/`, targeting Node.js 4 [[#233](https://github.com/insin/nwb/issues/233)]
+- Use ES2015 `String` methods available in Node.js 4 instead of `String.prototype.indexOf` comparisons [[#222](https://github.com/insin/nwb/issues/222)]
 
 # 0.14.3 / 2017-01-21
 
@@ -890,9 +1023,9 @@ These are being scoped to both make use of unreleased features and to test them 
 
 **Breaking Changes:**
 
-- **Dropped Node.js v0.12 support**
+- **Dropped Node.js 0.12 support**
 
-  Based on the `engines` config of nwb's dependencies, Node.js v4.2.0 is now the minimum required version.
+  Based on the `engines` config of nwb's dependencies, Node.js 4.2.0 is now the minimum required version.
 - **Upgraded from Babel 5 to Babel 6** [[#12](https://github.com/insin/nwb/issues/12)] [[#31](https://github.com/insin/nwb/issues/31)] [[@geowarin](https://github.com/geowarin/)]
 
   Babel 6 introduced [a number of breaking changes](https://github.com/babel/babel/blob/master/CHANGELOG.md#600) which you may need to account for in your codebase if you're using nwb or were otherwise using Babel 5.
@@ -1310,7 +1443,6 @@ These are being scoped to both make use of unreleased features and to test them 
 - cross-spawn: v2.1.5 → [v2.2.3](https://github.com/IndigoUnited/node-cross-spawn/compare/2.1.5...2.2.3) - update deps
 - [detect-port](https://github.com/xudafeng/detect-port/): v1.0.0
 - expect: v1.16.0 → [v1.20.1](https://github.com/mjackson/expect/blob/master/CHANGES.md#v1201)
-- fs-extra: v0.26.7 → [v0.30.0](https://github.com/jprichardson/node-fs-extra/blob/master/CHANGELOG.md#0300--2016-04-28)
 - html-webpack-plugin: v2.14.0 → [v2.17.0](https://github.com/ampedandwired/html-webpack-plugin/blob/master/CHANGELOG.md#v2170)
 - inquirer: v0.12.0 → [v1.0.2](https://github.com/SBoudrias/Inquirer.js/compare/v0.12.0...v1.0.2) - switch to Promise-based API
 - karma-coverage: v0.5.5 → [v1.0.0](https://github.com/karma-runner/karma-coverage/compare/v0.5.5...v1.0.0)
@@ -1371,7 +1503,6 @@ These are being scoped to both make use of unreleased features and to test them 
 - connect-history-api-fallback: v1.1.0 → v1.2.0 - support custom `Accept` headers
 - copy-template-dir: v1.2.0 → v1.2.1 - support large template folders
 - expect: v1.14.0 → [v1.16.0](https://github.com/mjackson/expect/compare/v1.14.0...v1.16.0) - mostly packaging changes?
-- fs-extra: v0.26.5 → 0.26.7 - bug fixes for `copy` and `emptyDir`
 - glob: v7.0.0 → [v7.0.3](https://github.com/isaacs/node-glob/compare/v7.0.0...v7.0.3) - misc fixes
 - html-webpack-plugin: v2.9.0 → [v2.14.0](https://github.com/ampedandwired/html-webpack-plugin/blob/master/CHANGELOG.md#v2140)
 - karma: v0.13.21 → [v0.13.22](https://github.com/karma-runner/karma/releases/tag/v0.13.22) - removed a large test file from npm package

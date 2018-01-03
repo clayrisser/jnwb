@@ -7,11 +7,10 @@ import runSeries from 'run-series'
 import merge from 'webpack-merge'
 
 import cleanModule from './commands/clean-module'
+import {getPluginConfig, getUserConfig} from './config'
 import createBabelConfig from './createBabelConfig'
 import debug from './debug'
 import {UserError} from './errors'
-import getPluginConfig from './getPluginConfig'
-import getUserConfig from './getUserConfig'
 import {deepToString} from './utils'
 import webpackBuild from './webpackBuild'
 import {createBanner, createExternals, logGzippedFileSizes} from './webpackUtils'
@@ -29,8 +28,8 @@ const DEFAULT_BABEL_IGNORE_CONFIG = [
 /**
  * Run Babel with generated config written to a temporary .babelrc.
  */
-function runBabel(name, {copyFiles, outDir, src}, buildBabelConfig, userBabelConfig, cb) {
-  let babelConfig = createBabelConfig(buildBabelConfig, userBabelConfig)
+function runBabel(name, {copyFiles, outDir, src}, buildBabelConfig, userConfig, cb) {
+  let babelConfig = createBabelConfig(buildBabelConfig, userConfig.babel, userConfig.path)
   babelConfig.ignore = DEFAULT_BABEL_IGNORE_CONFIG
 
   debug('babel config: %s', deepToString(babelConfig))
@@ -74,6 +73,7 @@ function buildUMD(args, buildConfig, userConfig, cb) {
     output: {
       filename: `${pkg.name}.js`,
       library: userConfig.npm.umd.global,
+      libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve('umd'),
     },
@@ -119,8 +119,8 @@ export default function moduleBuild(args, buildConfig = {}, cb) {
   // XXX Babel doesn't support passing the path to a babelrc file any more
   if (fs.existsSync('.babelrc')) {
     throw new UserError(
-      'Unable to build the module as there is a .babelrc in your project',
-      'nwb needs to write a temporary .babelrc to configure the build',
+      'Unable to build the module as there is a .babelrc in your project\n' +
+      'nwb needs to write a temporary .babelrc to configure the build'
     )
   }
 
@@ -149,7 +149,7 @@ export default function moduleBuild(args, buildConfig = {}, cb) {
         // Don't enable webpack-specific plugins
         webpack: false,
       }),
-      userConfig.babel,
+      userConfig,
       cb
     ))
   }
@@ -168,7 +168,7 @@ export default function moduleBuild(args, buildConfig = {}, cb) {
         // Don't enable webpack-specific plugins
         webpack: false,
       }),
-      userConfig.babel,
+      userConfig,
       cb
     ))
   }
