@@ -1,5 +1,6 @@
 import path from 'path'
 
+<<<<<<< HEAD
 import { directoryExists } from '../utils'
 import webpackServer from '../webpackServer'
 
@@ -30,12 +31,17 @@ export default function serveReactDemo(args, cb) {
     },
   }
 
+<<<<<<< HEAD
   if (args.hmr !== false && args.hmre !== false) {
     config.babel.presets.push(require.resolve('../react/react-hmre-preset'))
   }
 
   if (directoryExists('demo/public')) {
     config.plugins.copy = [{ from: path.resolve('demo/public'), to: dist }]
+=======
+  if (directoryExists('demo/public')) {
+    config.plugins.copy = [{from: path.resolve('demo/public'), to: dist}]
+>>>>>>> origin/jamrizzi/serve-web-modules
   }
 
   webpackServer(args, config, cb)
