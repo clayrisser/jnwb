@@ -1,6 +1,5 @@
 import path from 'path'
 
-<<<<<<< HEAD
 import { directoryExists } from '../utils'
 import webpackServer from '../webpackServer'
 
