@@ -1,6 +1,6 @@
 {
   "name": "jnwb",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A toolkit for JavaScript apps and libraries based on nwb",
   "keywords": [
     "angular",
